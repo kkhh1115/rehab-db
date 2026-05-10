@@ -6,239 +6,411 @@
 <title>재활의학과 통합 대시보드</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap');
-:root{
-  --navy:#132743;--navy2:#1E3555;--teal:#0F6E56;--teal2:#1D9E75;--tealLt:#E1F5EE;
-  --blue:#185FA5;--blue2:#378ADD;--blueLt:#E6F1FB;
-  --purple:#534AB7;--purpLt:#EEEDFE;
-  --amber:#BA7517;--amberLt:#FAEEDA;
-  --red:#A32D2D;--redLt:#FCEBEB;
-  --gray:#64748B;--grayLt:#F1F5F9;
-  --border:#E2E8F0;--off:#F8FAFC;
-  --font:'Noto Sans KR',sans-serif;
-}
+:root{--navy:#132743;--navy2:#1E3555;--teal:#0F6E56;--teal2:#1D9E75;--tealLt:#E1F5EE;--blue:#185FA5;--purple:#534AB7;--amber:#BA7517;--amberLt:#FAEEDA;--red:#A32D2D;--gray:#64748B;--border:#E2E8F0;--off:#F8FAFC;--font:'Noto Sans KR',sans-serif;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:var(--font);background:#EEF2F7;min-height:100vh;}
-.appbar{background:var(--navy);padding:10px 16px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:200;box-shadow:0 2px 12px rgba(0,0,0,.35);}
-.al{width:30px;height:30px;border-radius:7px;background:var(--teal);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;}
-.at{font-size:13px;font-weight:700;color:#fff;}
-.as{font-size:10px;color:#8FAEC5;margin-top:1px;}
-.ab{margin-left:auto;font-size:10px;background:var(--teal2);color:#fff;padding:2px 10px;border-radius:99px;white-space:nowrap;}
-.ptbar{background:var(--navy2);border-bottom:2px solid var(--teal2);padding:8px 14px;display:flex;flex-wrap:wrap;}
-.ptseg{padding:0 12px;border-right:1px solid #2D4A6E;}
-.ptseg:first-child{padding-left:0;}
-.ptseg:last-child{border-right:none;}
-.ptl{font-size:9px;color:#8FAEC5;margin-bottom:1px;}
-.ptv{font-size:11px;font-weight:600;color:#fff;}
-.notice{background:var(--amberLt);border:0.5px solid var(--amber);border-radius:6px;padding:6px 12px;margin:8px 14px 0;font-size:10px;color:var(--amber);}
+/* AppBar */
+.appbar{background:var(--navy);padding:9px 16px;display:flex;align-items:center;gap:7px;position:sticky;top:0;z-index:200;box-shadow:0 2px 12px rgba(0,0,0,.35);}
+.al{width:28px;height:28px;border-radius:7px;background:var(--teal);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0;}
+.at{font-size:12px;font-weight:700;color:#fff;}.as{font-size:9px;color:#8FAEC5;margin-top:1px;}
+.ab{font-size:10px;background:rgba(255,255,255,.15);color:#fff;padding:3px 10px;border-radius:99px;cursor:pointer;border:0.5px solid rgba(255,255,255,.3);font-family:var(--font);white-space:nowrap;}
+.ab-g{background:var(--teal2);border-color:var(--teal2);}.ab-on{background:rgba(255,255,255,.28);}
+/* Patient bar */
+.ptbar{background:var(--navy2);border-bottom:2px solid var(--teal2);padding:7px 14px;display:flex;flex-wrap:wrap;align-items:center;}
+.ptseg{padding:0 10px;border-right:1px solid #2D4A6E;}.ptseg:first-child{padding-left:0;}.ptseg:last-child{border-right:none;}
+.ptl{font-size:9px;color:#8FAEC5;margin-bottom:1px;}.ptv{font-size:11px;font-weight:600;color:#fff;}
+.ptbtn{margin-left:auto;font-size:10px;background:rgba(255,255,255,.15);border:0.5px solid rgba(255,255,255,.3);color:#fff;padding:3px 10px;border-radius:6px;cursor:pointer;font-family:var(--font);}
+/* Filter bar */
+.fltbar{background:#fff;border-bottom:0.5px solid var(--border);padding:6px 14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.fg{display:flex;align-items:center;gap:3px;flex-wrap:wrap;}
+.flbl{font-size:9px;font-weight:700;color:var(--gray);white-space:nowrap;margin-right:1px;}
+.fopt{font-size:10px;padding:3px 9px;border-radius:99px;border:0.5px solid var(--border);background:var(--off);cursor:pointer;font-family:var(--font);transition:all .15s;white-space:nowrap;}
+.fopt.on{color:#fff;border-color:transparent;}
+/* Stats */
+.statsbar{background:#FAFBFC;border-bottom:0.5px solid var(--border);padding:5px 14px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:10px;color:var(--gray);}
+.statsbar b{color:#132743;}
+/* Patient list grid */
+.ptlist{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:10px 14px 20px;}
+.ptcard{background:#fff;border:0.5px solid var(--border);border-radius:12px;padding:11px 12px;cursor:pointer;transition:all .18s;}
+.ptcard:hover{box-shadow:0 3px 16px rgba(0,0,0,.12);border-color:var(--teal2);}
+.ptcard.sel{border:1.5px solid var(--teal2);box-shadow:0 0 0 3px #E1F5EE;}
+.dtag{font-size:9px;font-weight:700;padding:2px 7px;border-radius:99px;display:inline-block;}
+/* Split layout */
+.split{display:flex;align-items:flex-start;}
+.sidebar{width:250px;flex-shrink:0;border-right:0.5px solid var(--border);background:#fff;overflow-y:auto;max-height:calc(100vh - 56px);position:sticky;top:56px;}
+.sbhdr{padding:8px 12px;border-bottom:0.5px solid var(--border);font-size:11px;font-weight:700;color:#132743;display:flex;justify-content:space-between;align-items:center;background:var(--off);position:sticky;top:0;z-index:5;}
+.ptrow{padding:8px 12px;border-bottom:0.5px solid #F1F5F9;cursor:pointer;transition:background .1s;}
+.ptrow:hover{background:#F8FAFC;}.ptrow.sel{background:var(--tealLt);border-left:3px solid var(--teal2);}
+.main{flex:1;min-width:0;}
+/* Dashboard internals (from original) */
+.notice{background:var(--amberLt);border:0.5px solid var(--amber);border-radius:6px;padding:5px 12px;margin:6px 14px 0;font-size:10px;color:var(--amber);}
 .kstrip{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;padding:8px 14px 0;}
 .kcard{border-radius:10px;padding:9px 11px;text-align:center;border:0.5px solid var(--border);}
-.kl{font-size:9px;margin-bottom:2px;}
-.kv{font-size:20px;font-weight:700;line-height:1.15;}
-.ks{font-size:9px;color:#94A3B8;margin-top:2px;}
+.kl{font-size:9px;margin-bottom:2px;}.kv{font-size:20px;font-weight:700;line-height:1.15;}.ks{font-size:9px;color:#94A3B8;margin-top:2px;}
 .frow{display:flex;gap:4px;padding:8px 14px 0;flex-wrap:wrap;}
 .ftab{padding:5px 11px;border-radius:99px;border:0.5px solid var(--border);background:#fff;font-size:10px;font-weight:600;color:var(--gray);cursor:pointer;font-family:var(--font);transition:all .15s;}
 .ftab.on{color:#fff;border-color:transparent;}
-.mg{display:grid;grid-template-columns:1fr 310px;gap:10px;padding:10px 14px 20px;}
+.mg{display:grid;grid-template-columns:1fr 300px;gap:10px;padding:10px 14px 20px;}
 .card{background:#fff;border:0.5px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:10px;}
 .ch{display:flex;align-items:center;justify-content:space-between;padding:9px 12px 7px;}
-.ct{font-size:11px;font-weight:700;color:var(--navy);}
-.cc{font-size:9px;color:var(--gray);font-style:italic;}
+.ct{font-size:11px;font-weight:700;color:var(--navy);}.cc{font-size:9px;color:var(--gray);font-style:italic;}
 .agrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:0 10px 10px;}
 .acard{border-radius:8px;padding:9px 10px;background:var(--off);border:0.5px solid var(--border);cursor:pointer;transition:all .18s;position:relative;}
 .acard:hover{border-color:var(--teal2);box-shadow:0 2px 10px rgba(0,0,0,.1);}
-.an{font-size:9px;color:var(--gray);margin-bottom:2px;}
-.av{font-size:21px;font-weight:700;line-height:1.1;}
-.am{font-size:9px;color:#94A3B8;margin-top:1px;}
-.ad{position:absolute;right:7px;bottom:7px;font-size:10px;font-weight:700;}
+.an{font-size:9px;color:var(--gray);margin-bottom:2px;}.av{font-size:21px;font-weight:700;line-height:1.1;}.am{font-size:9px;color:#94A3B8;margin-top:1px;}.ad{position:absolute;right:7px;bottom:7px;font-size:10px;font-weight:700;}
 .gtabs{display:flex;gap:3px;padding:6px 12px 0;flex-wrap:wrap;}
 .gtab{padding:4px 9px;border-radius:6px;border:0.5px solid var(--border);background:#fff;font-size:10px;font-weight:600;color:var(--gray);cursor:pointer;font-family:var(--font);transition:all .15s;}
 .gtab.on{color:#fff;border-color:transparent;}
 .gw{padding:4px 12px 10px;height:190px;}
 .egrid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:0 10px 10px;}
 .ecard{border-radius:8px;padding:9px 10px;border:0.5px solid var(--border);}
-.en{font-size:10px;font-weight:700;margin-bottom:3px;}
-.ev{font-size:16px;font-weight:700;line-height:1.2;}
-.es{font-size:9px;color:var(--gray);margin-top:2px;}
+.en{font-size:10px;font-weight:700;margin-bottom:3px;}.ev{font-size:16px;font-weight:700;line-height:1.2;}.es{font-size:9px;color:var(--gray);margin-top:2px;}
 .imgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;padding:0 10px 10px;}
 .imcard{border-radius:8px;overflow:hidden;border:0.5px solid var(--border);}
 .imthumb{height:52px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#fff;}
-.iminfo{padding:5px 8px;}
-.iml{font-size:10px;font-weight:700;}
-.imd{font-size:9px;color:var(--gray);}
+.iminfo{padding:5px 8px;}.iml{font-size:10px;font-weight:700;}.imd{font-size:9px;color:var(--gray);}
 .ribig{font-size:50px;font-weight:700;text-align:center;line-height:1;}
 .risub{text-align:center;margin:4px 0 10px;display:flex;align-items:center;justify-content:center;gap:6px;}
 .ribadge{font-size:10px;font-weight:700;padding:2px 9px;border-radius:99px;color:#fff;}
 .rigrid{display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:0 12px 12px;}
-.ridom{border-radius:7px;padding:7px 9px;}
-.rdn{font-size:9px;font-weight:700;margin-bottom:3px;}
-.rdb{height:4px;border-radius:99px;background:#e2e8f0;margin-bottom:3px;}
-.rdbf{height:100%;border-radius:99px;}
-.rdv{font-size:13px;font-weight:700;}
+.ridom{border-radius:7px;padding:7px 9px;}.rdn{font-size:9px;font-weight:700;margin-bottom:3px;}.rdb{height:4px;border-radius:99px;background:#e2e8f0;margin-bottom:3px;}.rdbf{height:100%;border-radius:99px;}.rdv{font-size:13px;font-weight:700;}
 .rifo{padding:6px 12px 12px;font-size:10px;color:#475569;line-height:1.8;}
 .airow{display:flex;align-items:center;justify-content:space-between;padding:6px 12px;border-bottom:0.5px solid var(--off);}
-.ail{font-size:11px;color:var(--gray);}
-.aiv{font-size:11px;font-weight:700;}
-.aic{font-size:9px;color:#94A3B8;margin-left:4px;}
+.ail{font-size:11px;color:var(--gray);}.aiv{font-size:11px;font-weight:700;}.aic{font-size:9px;color:#94A3B8;margin-left:4px;}
+/* Popup */
 .popbg{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;display:flex;align-items:center;justify-content:center;padding:14px;}
-.pop{background:#fff;border-radius:14px;width:100%;max-width:440px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.25);}
-.poph{padding:11px 14px;display:flex;align-items:center;justify-content:space-between;}
-.popt{font-size:12px;font-weight:700;color:#fff;line-height:1.35;}
-.popx{background:rgba(255,255,255,.25);border:none;color:#fff;width:22px;height:22px;border-radius:50%;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;}
-.popb{padding:12px 14px;}
+.pop{background:#fff;border-radius:14px;width:100%;max-width:420px;max-height:88vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 8px 40px rgba(0,0,0,.25);}
+.poph{padding:11px 14px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.popt{font-size:12px;font-weight:700;color:#fff;}
+.popx{background:rgba(255,255,255,.25);border:none;color:#fff;width:22px;height:22px;border-radius:50%;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;font-family:var(--font);}
+.popb{padding:12px 14px;overflow-y:auto;}
 .hrow{display:flex;align-items:center;gap:8px;margin-bottom:9px;}
-.hdate{font-size:11px;color:var(--gray);width:40px;flex-shrink:0;}
+.hdate{font-size:11px;color:#94A3B8;width:40px;flex-shrink:0;}
 .hbar{flex:1;height:9px;background:#F1F5F9;border-radius:99px;overflow:hidden;}
-.hfill{height:100%;border-radius:99px;transition:width .5s;}
-.hscore{font-size:12px;font-weight:700;width:40px;text-align:right;}
+.hfill{height:100%;border-radius:99px;}
+.hscore{font-size:12px;font-weight:700;width:44px;text-align:right;}
 .fb{background:var(--off);border-radius:8px;padding:8px 10px;border:0.5px solid var(--border);font-size:11px;color:#475569;line-height:1.7;margin-top:8px;font-style:italic;}
-@media(max-width:900px){.mg{grid-template-columns:1fr;}}
-@media(max-width:700px){.kstrip{grid-template-columns:repeat(2,1fr);}.agrid{grid-template-columns:repeat(2,1fr);}.egrid{grid-template-columns:repeat(2,1fr);}}
+/* Sparkline */
+.spark svg{display:block;}
+@media(max-width:1200px){.ptlist{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:900px){.ptlist{grid-template-columns:repeat(2,1fr);}.mg{grid-template-columns:1fr;}}
+@media(max-width:600px){.ptlist{grid-template-columns:1fr;}.split{flex-direction:column;}.sidebar{width:100%;max-height:200px;position:static;}}
 </style>
 </head>
 <body>
 <div id="root"></div>
 <script>
 const {useState,useMemo}=React;
+const e=(t,p,...c)=>React.createElement(t,p,...c);
 
-// ── 순수 SVG 라인 차트 (Recharts 대체) ──
+/* ── dept color map ── */
+const DC={RM:'#0F6E56',NU:'#534AB7',NS:'#185FA5',OS:'#BA7517',CS:'#993C1D'};
+
+/* ── 20 patients ── */
+const PTS=[
+ {id:'PT001',name:'김○○',age:72,g:'남',diag:'뇌경색',icd:'I63',admit:'03.01',days:49,dept:'RM',ref:'RM',dr:'김재활',ri:65,riH:[20,35,45,55,62,65],bbs:42,mbi:75,fac:3,mmse:24},
+ {id:'PT002',name:'이○○',age:58,g:'여',diag:'뇌출혈',icd:'I61',admit:'03.05',days:45,dept:'RM',ref:'NU',dr:'이신경',ri:48,riH:[10,22,30,38,44,48],bbs:32,mbi:62,fac:2,mmse:21},
+ {id:'PT003',name:'박○○',age:66,g:'남',diag:'뇌경색',icd:'I63',admit:'03.08',days:42,dept:'RM',ref:'RM',dr:'김재활',ri:72,riH:[25,38,50,60,68,72],bbs:48,mbi:80,fac:4,mmse:27},
+ {id:'PT004',name:'최○○',age:45,g:'여',diag:'척수손상',icd:'T10',admit:'02.20',days:79,dept:'RM',ref:'NS',dr:'박신외',ri:38,riH:[5,12,20,28,33,38],bbs:null,mbi:45,fac:null,mmse:29},
+ {id:'PT005',name:'정○○',age:80,g:'남',diag:'뇌경색',icd:'I63',admit:'03.12',days:38,dept:'RM',ref:'NU',dr:'이신경',ri:30,riH:[8,15,20,25,28,30],bbs:22,mbi:40,fac:1,mmse:17},
+ {id:'PT006',name:'강○○',age:63,g:'여',diag:'뇌출혈',icd:'I61',admit:'03.03',days:47,dept:'RM',ref:'RM',dr:'김재활',ri:55,riH:[18,28,38,46,52,55],bbs:38,mbi:68,fac:3,mmse:25},
+ {id:'PT007',name:'조○○',age:77,g:'남',diag:'파킨슨병',icd:'G20',admit:'03.15',days:35,dept:'RM',ref:'NU',dr:'이신경',ri:42,riH:[15,22,28,34,38,42],bbs:28,mbi:58,fac:2,mmse:22},
+ {id:'PT008',name:'윤○○',age:61,g:'여',diag:'뇌경색',icd:'I63',admit:'02.25',days:74,dept:'RM',ref:'RM',dr:'김재활',ri:78,riH:[22,40,55,65,72,78],bbs:50,mbi:85,fac:4,mmse:28},
+ {id:'PT009',name:'장○○',age:84,g:'남',diag:'뇌출혈',icd:'I61',admit:'03.18',days:32,dept:'RM',ref:'NS',dr:'박신외',ri:25,riH:[5,10,15,18,22,25],bbs:18,mbi:35,fac:1,mmse:14},
+ {id:'PT010',name:'임○○',age:67,g:'여',diag:'척수손상',icd:'C5',admit:'02.15',days:84,dept:'RM',ref:'NS',dr:'박신외',ri:60,riH:[12,25,38,48,56,60],bbs:null,mbi:70,fac:null,mmse:28},
+ {id:'PT011',name:'한○○',age:70,g:'남',diag:'뇌경색',icd:'I63',admit:'03.10',days:40,dept:'RM',ref:'RM',dr:'김재활',ri:52,riH:[12,20,30,38,46,52],bbs:36,mbi:62,fac:2,mmse:22},
+ {id:'PT012',name:'신○○',age:74,g:'여',diag:'외상성뇌손상',icd:'S06',admit:'03.22',days:28,dept:'RM',ref:'NS',dr:'박신외',ri:35,riH:[8,14,22,28,32,35],bbs:24,mbi:48,fac:2,mmse:19},
+ {id:'PT013',name:'권○○',age:64,g:'남',diag:'뇌출혈',icd:'I61',admit:'03.01',days:49,dept:'RM',ref:'NU',dr:'이신경',ri:62,riH:[20,30,42,52,58,62],bbs:40,mbi:72,fac:3,mmse:26},
+ {id:'PT014',name:'황○○',age:82,g:'여',diag:'뇌경색',icd:'I63',admit:'03.25',days:25,dept:'RM',ref:'RM',dr:'김재활',ri:22,riH:[5,10,14,18,20,22],bbs:15,mbi:30,fac:1,mmse:15},
+ {id:'PT015',name:'오○○',age:55,g:'남',diag:'외상성뇌손상',icd:'S06',admit:'03.08',days:42,dept:'RM',ref:'OS',dr:'최정형',ri:45,riH:[12,20,28,36,41,45],bbs:30,mbi:60,fac:2,mmse:23},
+ {id:'PT016',name:'서○○',age:76,g:'여',diag:'파킨슨병',icd:'G20',admit:'03.12',days:38,dept:'RM',ref:'NU',dr:'이신경',ri:38,riH:[12,18,24,30,34,38],bbs:25,mbi:55,fac:2,mmse:20},
+ {id:'PT017',name:'노○○',age:68,g:'남',diag:'뇌경색',icd:'I63',admit:'02.28',days:71,dept:'RM',ref:'RM',dr:'김재활',ri:80,riH:[28,45,58,68,75,80],bbs:52,mbi:88,fac:5,mmse:29},
+ {id:'PT018',name:'하○○',age:73,g:'여',diag:'뇌경색',icd:'I63',admit:'03.15',days:35,dept:'RM',ref:'RM',dr:'김재활',ri:58,riH:[18,28,38,46,52,58],bbs:38,mbi:70,fac:3,mmse:24},
+ {id:'PT019',name:'문○○',age:79,g:'남',diag:'척수손상',icd:'L2',admit:'03.05',days:45,dept:'RM',ref:'OS',dr:'최정형',ri:44,riH:[10,18,26,34,40,44],bbs:null,mbi:58,fac:null,mmse:27},
+ {id:'PT020',name:'양○○',age:86,g:'여',diag:'뇌출혈',icd:'I61',admit:'03.20',days:30,dept:'RM',ref:'NU',dr:'이신경',ri:18,riH:[3,8,12,14,16,18],bbs:12,mbi:28,fac:1,mmse:12},
+];
+
+/* ── demo patient full ASMTS (PT011) ── */
+const DEMO='PT011';
+const ASMTS=[
+  {id:'bbs',cat:'물리치료',name:'BBS',full:'Berg Balance Scale',max:56,unit:'점',hi:true,mcid:4,hist:[{d:'03.12',v:12},{d:'03.19',v:18},{d:'03.26',v:22},{d:'04.02',v:26},{d:'04.10',v:32},{d:'04.17',v:36}],fb:'낙상 고위험(40점 미만). 균형 훈련 집중 권고.'},
+  {id:'fac',cat:'물리치료',name:'FAC',full:'기능적 보행 분류',max:5,unit:'단계',hi:true,mcid:1,hist:[{d:'03.12',v:0},{d:'03.19',v:1},{d:'03.26',v:1},{d:'04.02',v:2},{d:'04.10',v:2},{d:'04.17',v:2}],fb:'중간 보조 보행 단계.'},
+  {id:'tug',cat:'물리치료',name:'TUG',full:'Timed Up & Go',max:300,unit:'초',hi:false,mcid:2.9,hist:[{d:'03.19',v:68},{d:'03.26',v:55},{d:'04.02',v:48},{d:'04.10',v:40},{d:'04.17',v:35}],fb:'이동성 33초 단축.'},
+  {id:'fmaLe',cat:'물리치료',name:'FMA-LE',full:'하지 감각운동기능',max:34,unit:'점',hi:true,mcid:5,hist:[{d:'03.12',v:8},{d:'03.19',v:10},{d:'03.26',v:14},{d:'04.02',v:16},{d:'04.10',v:18},{d:'04.17',v:20}],fb:'신경근 기능 회복 중.'},
+  {id:'6mwt',cat:'물리치료',name:'6MWT',full:'6분 보행 검사',max:600,unit:'m',hi:true,mcid:50,hist:[{d:'04.02',v:80},{d:'04.10',v:105},{d:'04.17',v:128}],fb:'보행 지구력 향상.'},
+  {id:'mbi',cat:'작업치료',name:'MBI',full:'Modified Barthel Index',max:100,unit:'점',hi:true,mcid:10,hist:[{d:'03.12',v:30},{d:'03.19',v:38},{d:'03.26',v:45},{d:'04.02',v:52},{d:'04.10',v:58},{d:'04.17',v:62}],fb:'ADL 부분 독립(C등급).'},
+  {id:'mmse',cat:'작업치료',name:'MMSE-K',full:'간이 정신상태 검사',max:30,unit:'점',hi:true,mcid:3,hist:[{d:'03.12',v:18},{d:'03.26',v:19},{d:'04.10',v:21},{d:'04.17',v:22}],fb:'인지 기능 소폭 향상.'},
+  {id:'fmaUe',cat:'작업치료',name:'FMA-UE',full:'상지 감각운동기능',max:66,unit:'점',hi:true,mcid:7,hist:[{d:'03.12',v:15},{d:'03.26',v:20},{d:'04.10',v:25},{d:'04.17',v:28}],fb:'상지 기능 회복 중.'},
+  {id:'masa',cat:'작업치료',name:'MASA',full:'연하기능 평가',max:200,unit:'점',hi:true,mcid:15,hist:[{d:'03.15',v:128},{d:'03.28',v:138},{d:'04.15',v:142}],fb:'연하 기능 중등도.'},
+  {id:'mmt',cat:'작업치료',name:'MMT(Rt)',full:'MMT 우측',max:5,unit:'등급',hi:true,mcid:1,hist:[{d:'03.12',v:2},{d:'03.26',v:2},{d:'04.10',v:3},{d:'04.17',v:3}],fb:'근력 향상.'},
+];
+const RID={balance:{lbl:'균형/보행',w:.30,ids:['bbs','fac','tug','6mwt'],col:'#534AB7',bg:'#EEEDFE'},func:{lbl:'기능/ADL',w:.35,ids:['mbi','masa'],col:'#185FA5',bg:'#E6F1FB'},motor:{lbl:'운동기능',w:.20,ids:['fmaLe','fmaUe','mmt'],col:'#0F6E56',bg:'#E1F5EE'},cog:{lbl:'인지기능',w:.15,ids:['mmse'],col:'#BA7517',bg:'#FAEEDA'}};
+const EQ=[{name:'Walkbot',val:'18세션',sub:'마지막: 04.16',col:'#E6F1FB',fc:'#185FA5'},{name:'InBody',val:'3회',sub:'마지막: 04.10',col:'#E1F5EE',fc:'#0F6E56'},{name:'RehaCom',val:'12세션',sub:'마지막: 04.15',col:'#EEEDFE',fc:'#534AB7'},{name:'Raphael',val:'미진행',sub:'—',col:'#F1F5F9',fc:'#64748B'}];
+const IMG=[{a:'MR',l:'Brain MRI',d:'03.10 · 3건',bg:'#534AB7'},{a:'CT',l:'Brain CT',d:'03.10 · 1건',bg:'#185FA5'},{a:'VF',l:'VFSS',d:'03.25 · 1건',bg:'#993C1D'}];
+const GC={ri:'#1D9E75',bbs:'#534AB7',mbi:'#185FA5',fac:'#534AB7',fmaLe:'#0F6E56',tug:'#993C1D'};
+const CATS=['전체','물리치료','작업치료','소아치료','언어치료','장비','영상'];
+const CC={'전체':'#132743','물리치료':'#0F6E56','작업치료':'#185FA5','소아치료':'#3B6D11','언어치료':'#993C1D','장비':'#534AB7','영상':'#BA7517'};
+
+/* ── helpers ── */
+function sc(a){const last=a.hist[a.hist.length-1]?.v,first=a.hist[0]?.v;if(last==null||first==null)return null;if(a.hi){const d=a.max-first;return d<=0?last/a.max*100:Math.min(100,Math.max(0,(last-first)/d*100));}return first<=0?0:Math.min(100,Math.max(0,(first-last)/first*100));}
+function calcRI(asmts){const dom={};for(const[k,d]of Object.entries(RID)){const s=d.ids.map(id=>{const a=asmts.find(x=>x.id===id);return a?sc(a):null;}).filter(x=>x!=null);dom[k]=s.length?Math.round(s.reduce((a,b)=>a+b,0)/s.length):null;}let tw=0,ts=0;for(const[k,d]of Object.entries(RID)){if(dom[k]!=null){tw+=d.w;ts+=d.w*dom[k];}}return{ri:tw>0?Math.round(ts/tw):null,dom};}
+function dv(a){if(a.hist.length<2)return null;return a.hist[a.hist.length-1].v-a.hist[0].v;}
+function riGraph(asmts){const dates=['03.12','03.19','03.26','04.02','04.10','04.17'];return dates.map(date=>{let tw=0,ts=0;for(const[k,d]of Object.entries(RID)){const s=d.ids.map(id=>{const a=asmts.find(x=>x.id===id);if(!a)return null;const h=a.hist.filter(x=>x.d<=date).slice(-1)[0];if(!h)return null;const f=a.hist[0].v;if(a.hi){const dn=a.max-f;return dn<=0?h.v/a.max*100:Math.min(100,Math.max(0,(h.v-f)/dn*100));}return f<=0?0:Math.min(100,Math.max(0,(f-h.v)/f*100));}).filter(x=>x!=null);if(s.length){const avg=s.reduce((a,b)=>a+b,0)/s.length;tw+=d.w;ts+=d.w*avg;}}return{date,value:tw>0?Math.round(ts/tw):null};}).filter(x=>x.value!=null);}
+function riColor(v){return v>=75?'#0F6E56':v>=50?'#185FA5':v>=25?'#BA7517':'#A32D2D';}
+function riLabel(v){return v>=75?'우수':v>=50?'양호':v>=25?'부분':'최소';}
+
+/* ── Sparkline ── */
+function Spark({data,color}){
+  if(!data||data.length<2)return null;
+  const W=52,H=20,mn=Math.min(...data),mx=Math.max(...data),range=mx-mn||1;
+  const pts=data.map((v,i)=>`${i/(data.length-1)*W},${H-2-(v-mn)/range*(H-5)}`).join(' ');
+  return e('svg',{width:W,height:H},e('polyline',{points:pts,fill:'none',stroke:color,strokeWidth:1.8,strokeLinejoin:'round',strokeLinecap:'round'}));
+}
+
+/* ── SvgLineChart ── */
 function SvgLineChart({data,color}){
-  if(!data||data.length===0)return React.createElement('div',{style:{display:'flex',alignItems:'center',justifyContent:'center',height:'100%',fontSize:11,color:'#94A3B8'}},'데이터 없음');
-  const W=560,H=160,PL=32,PR=12,PT=8,PB=24;
-  const vals=data.map(d=>d.value);
-  const mn=Math.min(...vals),mx=Math.max(...vals);
-  const range=mx-mn||1;
-  const px=i=>PL+(i/(data.length-1||1))*(W-PL-PR);
-  const py=v=>PT+(H-PT-PB)*(1-(v-mn)/range);
+  if(!data||!data.length)return e('div',{style:{display:'flex',alignItems:'center',justifyContent:'center',height:'100%',fontSize:11,color:'#94A3B8'}},'데이터 없음');
+  const W=560,H=160,PL=32,PR=12,PT=8,PB=24,vals=data.map(d=>d.value);
+  const mn=Math.min(...vals),mx=Math.max(...vals),range=mx-mn||1;
+  const px=i=>PL+(i/(data.length-1||1))*(W-PL-PR),py=v=>PT+(H-PT-PB)*(1-(v-mn)/range);
   const pts=data.map((d,i)=>({x:px(i),y:py(d.value),d}));
-  const polyline=pts.map(p=>p.x+','+p.y).join(' ');
-  const [tip,setTip]=React.useState(null);
-  // y grid lines
-  const yTicks=4;
-  const yLines=Array.from({length:yTicks+1},(_,i)=>mn+Math.round(range*i/yTicks));
-  return React.createElement('svg',{viewBox:`0 0 ${W} ${H}`,style:{width:'100%',height:'100%'},preserveAspectRatio:'none'},
-    // grid
-    ...yLines.map((v,i)=>{
-      const y=py(v);
-      return React.createElement('g',{key:'g'+i},
-        React.createElement('line',{x1:PL,y1:y,x2:W-PR,y2:y,stroke:'#F1F5F9',strokeWidth:1}),
-        React.createElement('text',{x:PL-4,y:y+4,fontSize:9,fill:'#94A3B8',textAnchor:'end'},v)
-      );
-    }),
-    // x labels
-    ...pts.map((p,i)=>i%(Math.ceil(data.length/6))===0?React.createElement('text',{key:'x'+i,x:p.x,y:H-4,fontSize:9,fill:'#94A3B8',textAnchor:'middle'},p.d.date):null),
-    // area fill
-    React.createElement('polyline',{points:polyline+` ${W-PR},${H-PB} ${PL},${H-PB}`,fill:color+'22',stroke:'none'}),
-    // line
-    React.createElement('polyline',{points:polyline,fill:'none',stroke:color,strokeWidth:2.5,strokeLinejoin:'round',strokeLinecap:'round'}),
-    // dots + hover
-    ...pts.map((p,i)=>React.createElement('g',{key:'d'+i,
-      onMouseEnter:()=>setTip({x:p.x,y:p.y,val:p.d.value,date:p.d.date}),
-      onMouseLeave:()=>setTip(null)},
-      React.createElement('circle',{cx:p.x,cy:p.y,r:4,fill:color,stroke:'#fff',strokeWidth:1.5})
-    )),
-    // tooltip
-    tip&&React.createElement('g',{key:'tip'},
-      React.createElement('rect',{x:tip.x-28,y:tip.y-28,width:56,height:22,rx:5,fill:'#132743',opacity:.92}),
-      React.createElement('text',{x:tip.x,y:tip.y-13,fontSize:10,fill:'#fff',textAnchor:'middle',fontWeight:600},tip.date+' · '+tip.val)
+  const poly=pts.map(p=>p.x+','+p.y).join(' ');
+  const[tip,setTip]=React.useState(null);
+  const yl=Array.from({length:5},(_,i)=>mn+Math.round(range*i/4));
+  return e('svg',{viewBox:`0 0 ${W} ${H}`,style:{width:'100%',height:'100%'},preserveAspectRatio:'none'},
+    ...yl.map((v,i)=>{const y=py(v);return e('g',{key:'g'+i},e('line',{x1:PL,y1:y,x2:W-PR,y2:y,stroke:'#F1F5F9',strokeWidth:1}),e('text',{x:PL-4,y:y+4,fontSize:9,fill:'#94A3B8',textAnchor:'end'},v));}),
+    ...pts.map((p,i)=>i%(Math.ceil(data.length/6))===0?e('text',{key:'x'+i,x:p.x,y:H-4,fontSize:9,fill:'#94A3B8',textAnchor:'middle'},p.d.date):null),
+    e('polyline',{points:poly+` ${W-PR},${H-PB} ${PL},${H-PB}`,fill:color+'22',stroke:'none'}),
+    e('polyline',{points:poly,fill:'none',stroke:color,strokeWidth:2.5,strokeLinejoin:'round',strokeLinecap:'round'}),
+    ...pts.map((p,i)=>e('g',{key:'d'+i,onMouseEnter:()=>setTip({x:p.x,y:p.y,val:p.d.value,date:p.d.date}),onMouseLeave:()=>setTip(null)},e('circle',{cx:p.x,cy:p.y,r:4,fill:color,stroke:'#fff',strokeWidth:1.5}))),
+    tip&&e('g',{key:'tip'},e('rect',{x:tip.x-28,y:tip.y-28,width:56,height:22,rx:5,fill:'#132743',opacity:.92}),e('text',{x:tip.x,y:tip.y-13,fontSize:10,fill:'#fff',textAnchor:'middle',fontWeight:600},tip.date+' · '+tip.val))
+  );
+}
+
+/* ── Patient Card (grid view) ── */
+function PtCard({p,sel,onClick}){
+  const rc=riColor(p.ri),dc=DC[p.ref]||'#64748B';
+  return e('div',{className:`ptcard${sel?' sel':''}`,onClick},
+    e('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:5}},
+      e('div',null,
+        e('div',{style:{fontSize:14,fontWeight:700,color:'#132743'}},p.name),
+        e('div',{style:{fontSize:10,color:'#64748B',marginTop:1}},p.age+'세 · '+p.g)
+      ),
+      e('span',{className:'dtag',style:{background:dc+'18',color:dc,border:'0.5px solid '+dc+'44'}},p.ref)
+    ),
+    e('div',{style:{fontSize:10,color:'#475569',marginBottom:1}},p.diag+' ('+p.icd+')'),
+    e('div',{style:{fontSize:9,color:'#94A3B8',marginBottom:8}},p.dept+'과 · ',e('b',{style:{color:dc}},p.dr),' 교수'),
+    e('div',{style:{display:'flex',alignItems:'flex-end',justifyContent:'space-between',marginBottom:4}},
+      e('div',null,
+        e('div',{style:{fontSize:9,color:'#94A3B8'}},'Recovery Index'),
+        e('div',{style:{fontSize:22,fontWeight:700,color:rc,lineHeight:1.1}},p.ri)
+      ),
+      e('div',{style:{textAlign:'right'}},
+        e('div',{style:{fontSize:9,color:'#94A3B8',marginBottom:2}},p.days+'일째'),
+        e(Spark,{data:p.riH,color:rc})
+      )
+    ),
+    e('div',{style:{height:4,background:'#F1F5F9',borderRadius:99,overflow:'hidden'}},
+      e('div',{style:{width:p.ri+'%',height:'100%',background:rc,borderRadius:99}})
+    ),
+    e('div',{style:{display:'flex',gap:8,marginTop:7,paddingTop:6,borderTop:'0.5px solid #F1F5F9',flexWrap:'wrap'}},
+      ...[p.bbs!=null&&['BBS',p.bbs],p.mbi!=null&&['MBI',p.mbi],p.fac!=null&&['FAC',p.fac],p.mmse!=null&&['MMSE',p.mmse]].filter(Boolean)
+        .map(([n,v])=>e('div',{key:n,style:{fontSize:9,color:'#64748B'}},n+': ',e('b',{style:{color:'#132743'}},v)))
     )
   );
 }
 
-const e=(t,p,...c)=>React.createElement(t,p,...c);
-const CATS=["전체","물리치료","작업치료","소아치료","언어치료","장비","영상"];
-const CC={"전체":"#132743","물리치료":"#0F6E56","작업치료":"#185FA5","소아치료":"#3B6D11","언어치료":"#993C1D","장비":"#534AB7","영상":"#BA7517"};
-const ASMTS=[
-  {id:"bbs",cat:"물리치료",name:"BBS",full:"Berg Balance Scale",max:56,unit:"점",hi:true,mcid:4,hist:[{d:"03.12",v:12},{d:"03.19",v:18},{d:"03.26",v:22},{d:"04.02",v:26},{d:"04.10",v:32},{d:"04.17",v:36}],fb:"낙상 고위험(40점 미만). 균형 훈련 집중 및 Walkbot 세션 강화 권고."},
-  {id:"fac",cat:"물리치료",name:"FAC",full:"기능적 보행 분류",max:5,unit:"단계",hi:true,mcid:1,hist:[{d:"03.12",v:0},{d:"03.19",v:1},{d:"03.26",v:1},{d:"04.02",v:2},{d:"04.10",v:2},{d:"04.17",v:2}],fb:"중간 보조 보행 단계. 집중 보행 세션 및 과제 특이적 훈련 강화 권고."},
-  {id:"tug",cat:"물리치료",name:"TUG",full:"Timed Up & Go",max:300,unit:"초",hi:false,mcid:2.9,hist:[{d:"03.19",v:68},{d:"03.26",v:55},{d:"04.02",v:48},{d:"04.10",v:40},{d:"04.17",v:35}],fb:"이동성 33초 단축. 계단 훈련 단계적 도입 고려."},
-  {id:"fmaLe",cat:"물리치료",name:"FMA-LE",full:"하지 감각운동기능",max:34,unit:"점",hi:true,mcid:5,hist:[{d:"03.12",v:8},{d:"03.19",v:10},{d:"03.26",v:14},{d:"04.02",v:16},{d:"04.10",v:18},{d:"04.17",v:20}],fb:"신경근 기능 회복 중. FES 병행 하지 재훈련 유지 권고."},
-  {id:"6mwt",cat:"물리치료",name:"6MWT",full:"6분 보행 검사",max:600,unit:"m",hi:true,mcid:50,hist:[{d:"04.02",v:80},{d:"04.10",v:105},{d:"04.17",v:128}],fb:"보행 지구력 향상. 목표 150m 도달 후 지역사회 보행 훈련 시작 고려."},
-  {id:"mbi",cat:"작업치료",name:"MBI",full:"Modified Barthel Index",max:100,unit:"점",hi:true,mcid:10,hist:[{d:"03.12",v:30},{d:"03.19",v:38},{d:"03.26",v:45},{d:"04.02",v:52},{d:"04.10",v:58},{d:"04.17",v:62}],fb:"ADL 부분 독립(C등급). MBI 75점 이상 목표로 집중 ADL 훈련 권고."},
-  {id:"mmse",cat:"작업치료",name:"MMSE-K",full:"간이 정신상태 검사",max:30,unit:"점",hi:true,mcid:3,hist:[{d:"03.12",v:18},{d:"03.26",v:19},{d:"04.10",v:21},{d:"04.17",v:22}],fb:"인지 기능 소폭 향상. RehaCom 인지 프로그램 강화 권고."},
-  {id:"fmaUe",cat:"작업치료",name:"FMA-UE",full:"상지 감각운동기능",max:66,unit:"점",hi:true,mcid:7,hist:[{d:"03.12",v:15},{d:"03.26",v:20},{d:"04.10",v:25},{d:"04.17",v:28}],fb:"상지 기능 회복 중. 과제 지향 훈련 및 손기능 정밀 훈련 병행 권고."},
-  {id:"masa",cat:"작업치료",name:"MASA",full:"연하기능 평가",max:200,unit:"점",hi:true,mcid:15,hist:[{d:"03.15",v:128},{d:"03.28",v:138},{d:"04.15",v:142}],fb:"연하 기능 중등도. VFSS 추적 및 연하 재활 지속 권고."},
-  {id:"mmt",cat:"작업치료",name:"MMT(Rt)",full:"MMT 우측",max:5,unit:"등급",hi:true,mcid:1,hist:[{d:"03.12",v:2},{d:"03.26",v:2},{d:"04.10",v:3},{d:"04.17",v:3}],fb:"근력 향상. 저항 운동 강화 및 기능적 근력 훈련 지속 권고."},
-];
-const RID={balance:{lbl:"균형/보행",w:.30,ids:["bbs","fac","tug","6mwt"],col:"#534AB7",bg:"#EEEDFE"},func:{lbl:"기능/ADL",w:.35,ids:["mbi","masa"],col:"#185FA5",bg:"#E6F1FB"},motor:{lbl:"운동기능",w:.20,ids:["fmaLe","fmaUe","mmt"],col:"#0F6E56",bg:"#E1F5EE"},cog:{lbl:"인지기능",w:.15,ids:["mmse"],col:"#BA7517",bg:"#FAEEDA"}};
-function sc(a){const last=a.hist[a.hist.length-1]?.v,first=a.hist[0]?.v;if(last==null||first==null)return null;if(a.hi){const d=a.max-first;return d<=0?last/a.max*100:Math.min(100,Math.max(0,(last-first)/d*100));}return first<=0?0:Math.min(100,Math.max(0,(first-last)/first*100));}
-function calcRI(){const dom={};for(const[k,d]of Object.entries(RID)){const s=d.ids.map(id=>{const a=ASMTS.find(x=>x.id===id);return a?sc(a):null;}).filter(x=>x!=null);dom[k]=s.length?Math.round(s.reduce((a,b)=>a+b,0)/s.length):null;}let tw=0,ts=0;for(const[k,d]of Object.entries(RID)){if(dom[k]!=null){tw+=d.w;ts+=d.w*dom[k];}}return{ri:tw>0?Math.round(ts/tw):null,dom};}
-function dv(a){if(a.hist.length<2)return null;return a.hist[a.hist.length-1].v-a.hist[0].v;}
-function riGraph(){const dates=["03.12","03.19","03.26","04.02","04.10","04.17"];return dates.map(date=>{let tw=0,ts=0;for(const[k,d]of Object.entries(RID)){const s=d.ids.map(id=>{const a=ASMTS.find(x=>x.id===id);if(!a)return null;const h=a.hist.filter(x=>x.d<=date).slice(-1)[0];if(!h)return null;const f=a.hist[0].v;if(a.hi){const dn=a.max-f;return dn<=0?h.v/a.max*100:Math.min(100,Math.max(0,(h.v-f)/dn*100));}return f<=0?0:Math.min(100,Math.max(0,(f-h.v)/f*100));}).filter(x=>x!=null);if(s.length){const avg=s.reduce((a,b)=>a+b,0)/s.length;tw+=d.w;ts+=d.w*avg;}}return{date,value:tw>0?Math.round(ts/tw):null};}).filter(x=>x.value!=null);}
-const EQ=[{name:"Walkbot",val:"18세션",sub:"마지막: 04.16",col:"#E6F1FB",fc:"#185FA5"},{name:"InBody",val:"3회 측정",sub:"마지막: 04.10",col:"#E1F5EE",fc:"#0F6E56"},{name:"RehaCom",val:"12세션",sub:"마지막: 04.15",col:"#EEEDFE",fc:"#534AB7"},{name:"Raphael",val:"미진행",sub:"—",col:"#F1F5F9",fc:"#64748B"}];
-const IMG=[{a:"MR",l:"Brain MRI",d:"03.10 · 3건",bg:"#534AB7"},{a:"CT",l:"Brain CT",d:"03.10 · 1건",bg:"#185FA5"},{a:"VF",l:"VFSS",d:"03.25 · 1건",bg:"#993C1D"}];
-const GC={"ri":"#1D9E75","bbs":"#534AB7","mbi":"#185FA5","fac":"#534AB7","fmaLe":"#0F6E56","tug":"#993C1D"};
-function App(){
-  const[cat,setCat]=useState("전체");
-  const[gc,setGc]=useState("ri");
-  const[pop,setPop]=useState(null);
-  const{ri,dom}=useMemo(calcRI,[]);
-  const riG=ri>=75?"우수 회복":ri>=50?"양호 회복":ri>=25?"부분 회복":"최소 회복";
-  const riC=ri>=75?"#0F6E56":ri>=50?"#185FA5":ri>=25?"#BA7517":"#A32D2D";
-  const shown=useMemo(()=>cat==="전체"||cat==="장비"||cat==="영상"?ASMTS:ASMTS.filter(a=>a.cat===cat),[cat]);
-  const gdata=useMemo(()=>gc==="ri"?riGraph():ASMTS.find(x=>x.id===gc)?.hist.map(h=>({date:h.d,value:h.v}))||[],[gc]);
-  const showEquip=cat==="전체"||cat==="장비";
-  const showImg=cat==="전체"||cat==="영상";
-  const showAsmt=cat!=="장비"&&cat!=="영상";
-  return e("div",null,
-    e("div",{className:"appbar"},e("div",{className:"al"},"AI"),e("div",null,e("div",{className:"at"},"재활의학과 통합 대시보드"),e("div",{className:"as"},"한림대학교 성심병원 · 물리치료팀 — 샘플 데이터 시연")),e("div",{className:"ab"},"EMR 연동 시 자동 반영")),
-    e("div",{className:"ptbar"},...[["환자명","○○○"],["등록번호","XXXXXXX"],["진단","뇌경색 (I63)"],["입원일","2026.03.10"],["재원","40일"],["담당","재활의학과"]].map(([l,v])=>e("div",{key:l,className:"ptseg"},e("div",{className:"ptl"},l),e("div",{className:"ptv"},v)))),
-    e("div",{className:"notice"},"★ 샘플 데이터 시연 화면입니다. EMR·CDW 연동 완료 시 실제 환자 데이터가 자동으로 표시되며 파싱된 평가 점수가 그래프로 자동 시각화됩니다."),
-    e("div",{className:"kstrip"},
-      e("div",{className:"kcard",style:{background:"#E1F5EE",border:"0.5px solid #1D9E75"}},e("div",{className:"kl",style:{color:"#0F6E56"}},"Recovery Index"),e("div",{className:"kv",style:{color:"#0F6E56"}},ri),e("div",{className:"ks"},"/100점")),
-      e("div",{className:"kcard",style:{background:"#E6F1FB",border:"0.5px solid #378ADD"}},e("div",{className:"kl",style:{color:"#185FA5"}},"퇴원 방향 예측"),e("div",{className:"kv",style:{color:"#185FA5",fontSize:11,paddingTop:5}},"데이터 축적 후"),e("div",{className:"ks"},"150건+ 필요")),
-      e("div",{className:"kcard",style:{background:"#E1F5EE",border:"0.5px solid #1D9E75"}},e("div",{className:"kl",style:{color:"#0F6E56"}},"보행 독립 확률"),e("div",{className:"kv",style:{color:"#0F6E56",fontSize:11,paddingTop:5}},"데이터 축적 후"),e("div",{className:"ks"},"150건+ 필요")),
-      e("div",{className:"kcard",style:{background:"#FAEEDA",border:"0.5px solid #BA7517"}},e("div",{className:"kl",style:{color:"#BA7517"}},"기능 예후 등급"),e("div",{className:"kv",style:{color:"#BA7517",fontSize:11,paddingTop:5}},"데이터 축적 후"),e("div",{className:"ks"},"300건+ 필요")),
-      e("div",{className:"kcard",style:{background:"#F1F5F9",border:"0.5px solid #E2E8F0"}},e("div",{className:"kl"},"최근 평가"),e("div",{className:"kv",style:{color:"#132743",fontSize:15,paddingTop:2}},"04.17"),e("div",{className:"ks"},"BBS·MMT·MBI"))
-    ),
-    e("div",{className:"frow"},...CATS.map(c=>e("button",{key:c,className:`ftab${cat===c?" on":""}`,style:cat===c?{background:CC[c]}:{},onClick:()=>setCat(c)},c))),
-    e("div",{className:"mg"},
-      e("div",null,
-        showAsmt&&e("div",{className:"card"},
-          e("div",{className:"ch"},e("div",{className:"ct"},"임상 평가 데이터"),e("div",{className:"cc"},"카드 클릭 → 날짜별 이력 · MCID 달성 여부")),
-          e("div",{className:"agrid"},...shown.map(a=>{
-            const last=a.hist[a.hist.length-1]?.v,delta=dv(a),met=delta!=null&&Math.abs(delta)>=a.mcid,up=delta!=null&&(a.hi?delta>0:delta<0);
-            return e("div",{key:a.id,className:"acard",style:met?{border:`1.5px solid ${up?"#1D9E75":"#E24B4A"}`,background:up?"#F0FDF8":"#FFF5F5"}:{},onClick:()=>setPop(a)},
-              e("div",{className:"an"},a.name),e("div",{className:"av",style:{color:met?(up?"#0F6E56":"#A32D2D"):"#132743"}},last),e("div",{className:"am"},a.unit+(a.max?` / ${a.max}`:"")),
-              delta!=null&&e("div",{className:"ad",style:{color:up?"#0F6E56":"#A32D2D"}},(up?"▲+":"▼")+(a.id==="tug"?Math.abs(delta).toFixed(1):Math.abs(delta))+a.unit)
-            );}))
-        ),
-        showAsmt&&e("div",{className:"card"},
-          e("div",{className:"ch"},e("div",{className:"ct"},"회복 추이 그래프"),e("div",{className:"cc"},"탭 전환으로 항목별 변화 확인")),
-          e("div",{className:"gtabs"},...[["ri","Recovery Index"],["bbs","BBS"],["mbi","MBI"],["fac","FAC"],["fmaLe","FMA-LE"],["tug","TUG"]].map(([id,lbl])=>e("button",{key:id,className:`gtab${gc===id?" on":""}`,style:gc===id?{background:GC[id]}:{},onClick:()=>setGc(id)},lbl))),
-          e("div",{className:"gw"},e(SvgLineChart,{data:gdata,color:GC[gc]||"#132743"}))
-        ),
-        showEquip&&e("div",{className:"card"},
-          e("div",{className:"ch"},e("div",{className:"ct"},"장비 치료 데이터 — 세션 횟수 기반 기능변화 추이 관찰"),e("div",{className:"cc"},"세부 수치 자동연동은 IT팀 협의 후 구현")),
-          e("div",{className:"egrid"},...EQ.map(q=>e("div",{key:q.name,className:"ecard",style:{background:q.col,borderColor:q.fc}},e("div",{className:"en",style:{color:q.fc}},q.name),e("div",{className:"ev",style:{color:q.fc}},q.val),e("div",{className:"es"},q.sub))))
-        ),
-        showImg&&e("div",{className:"card"},
-          e("div",{className:"ch"},e("div",{className:"ct"},"영상 자료"),e("div",{className:"cc"},"PACS 연동 시 클릭으로 영상 뷰어 실행")),
-          e("div",{className:"imgrid"},...IMG.map(im=>e("div",{key:im.a,className:"imcard"},e("div",{className:"imthumb",style:{background:im.bg}},im.a),e("div",{className:"iminfo"},e("div",{className:"iml"},im.l),e("div",{className:"imd"},im.d)))))
-        )
+/* ── Patient Row (sidebar) ── */
+function PtRow({p,sel,onClick}){
+  const rc=riColor(p.ri),dc=DC[p.ref]||'#64748B';
+  return e('div',{className:`ptrow${sel?' sel':''}`,onClick},
+    e('div',{style:{display:'flex',alignItems:'center',justifyContent:'space-between'}},
+      e('div',null,
+        e('div',{style:{fontSize:11,fontWeight:700,color:'#132743'}},p.name,' ',e('span',{style:{fontSize:9,color:'#94A3B8',fontWeight:400}},p.age+'세 '+p.g)),
+        e('div',{style:{fontSize:9,marginTop:1}},e('span',{style:{color:dc,fontWeight:700}},p.ref),' · ',e('span',{style:{color:'#64748B'}},p.dr))
       ),
-      e("div",null,
-        e("div",{className:"card"},
-          e("div",{className:"ch"},e("div",{className:"ct"},"Recovery Index")),
-          e("div",{style:{padding:"6px 12px 0"}},e("div",{className:"ribig",style:{color:riC}},ri),e("div",{className:"risub"},e("span",{className:"ribadge",style:{background:riC}},riG),e("span",{style:{fontSize:10,color:"#94A3B8"}},"/100점"))),
-          e("div",{className:"rigrid"},...Object.entries(RID).map(([k,d])=>e("div",{key:k,className:"ridom",style:{background:d.bg}},e("div",{className:"rdn",style:{color:d.col}},d.lbl),e("div",{className:"rdb"},e("div",{className:"rdbf",style:{width:`${dom[k]||0}%`,background:d.col}})),e("div",{className:"rdv",style:{color:d.col}},dom[k]!=null?dom[k]+"/100":"미측정")))),
-          e("div",{className:"rifo"},e("div",{style:{fontWeight:600,marginBottom:4,color:"#132743"}},"산출 공식"),"① (현재−입원) ÷ (최대−입원) × 100",e("br"),"② 측정된 항목만 평균 → 영역 점수",e("br"),"③ 가중 평균 (ADL 35%·균형 30%·운동 20%·인지 15%)")
+      e('div',{style:{textAlign:'right',flexShrink:0,paddingLeft:6}},
+        e('div',{style:{fontSize:14,fontWeight:700,color:rc}},p.ri),
+        e('div',{style:{fontSize:8,color:'#94A3B8'}},'RI / '+p.days+'일')
+      )
+    ),
+    e('div',{style:{fontSize:9,color:'#475569',marginTop:2}},p.diag,' · '+p.icd)
+  );
+}
+
+/* ── Filter Bar ── */
+function FilterBar({f,setF,cnt,total}){
+  const opt=(key,val,lbl,col)=>{const on=f[key]===val;return e('button',{key:val,className:`fopt${on?' on':''}`,style:on&&col?{background:col}:{},onClick:()=>setF(p=>({...p,[key]:val}))},lbl);};
+  return e('div',{className:'fltbar'},
+    e('div',{className:'fg'},e('span',{className:'flbl'},'나이'),opt('age','전체','전체'),opt('age','<60','~59세'),opt('age','60s','60대'),opt('age','70s','70대'),opt('age','80+','80세+')),
+    e('div',{className:'fg'},e('span',{className:'flbl'},'성별'),opt('g','전체','전체'),opt('g','남','남','#185FA5'),opt('g','여','여','#993C1D')),
+    e('div',{className:'fg'},e('span',{className:'flbl'},'진단'),opt('diag','전체','전체'),opt('diag','뇌경색','뇌경색','#0F6E56'),opt('diag','뇌출혈','뇌출혈','#A32D2D'),opt('diag','척수손상','척수손상','#534AB7'),opt('diag','기타','기타')),
+    e('div',{className:'fg'},e('span',{className:'flbl'},'과/주치'),opt('ref','전체','전체'),opt('ref','RM','RM',DC.RM),opt('ref','NU','NU',DC.NU),opt('ref','NS','NS',DC.NS),opt('ref','OS','OS',DC.OS)),
+    e('span',{style:{marginLeft:'auto',fontSize:11,fontWeight:600,color:cnt<total?'#BA7517':'#94A3B8'}},cnt<total?cnt+' / '+total+'명':total+'명 전체')
+  );
+}
+
+/* ── Main App ── */
+function App(){
+  const[selId,setSelId]=useState(null);
+  const[sidebar,setSidebar]=useState(true);
+  const[f,setF]=useState({age:'전체',g:'전체',diag:'전체',ref:'전체'});
+  const[cat,setCat]=useState('전체');
+  const[gc,setGc]=useState('ri');
+  const[pop,setPop]=useState(null);
+
+  const selPt=selId?PTS.find(p=>p.id===selId):null;
+  const asmts=ASMTS; // only demo patient has full data
+
+  const{ri,dom}=useMemo(()=>calcRI(asmts),[]);
+  const gdata=useMemo(()=>gc==='ri'?riGraph(asmts):asmts.find(x=>x.id===gc)?.hist.map(h=>({date:h.d,value:h.v}))||[],[gc]);
+  const shown=useMemo(()=>cat==='전체'||cat==='장비'||cat==='영상'?asmts:asmts.filter(a=>a.cat===cat),[cat]);
+
+  const filtPts=useMemo(()=>PTS.filter(p=>{
+    const a=f.age;
+    if(a==='<60'&&p.age>=60)return false;
+    if(a==='60s'&&(p.age<60||p.age>=70))return false;
+    if(a==='70s'&&(p.age<70||p.age>=80))return false;
+    if(a==='80+'&&p.age<80)return false;
+    if(f.g!=='전체'&&p.g!==f.g)return false;
+    if(f.diag!=='전체'){
+      const d=f.diag;
+      if(d==='기타'&&['뇌경색','뇌출혈','척수손상'].some(x=>p.diag.includes(x)))return false;
+      if(d!=='기타'&&!p.diag.includes(d))return false;
+    }
+    if(f.ref!=='전체'&&p.ref!==f.ref)return false;
+    return true;
+  }),[f]);
+
+  const avgRI=Math.round(filtPts.reduce((s,p)=>s+p.ri,0)/(filtPts.length||1));
+
+  /* ── LIST VIEW ── */
+  if(!selId) return e('div',null,
+    e('div',{className:'appbar'},
+      e('div',{className:'al'},'AI'),
+      e('div',null,e('div',{className:'at'},'재활의학과 통합 대시보드'),e('div',{className:'as'},'한림대학교 성심병원 · 재활의학팀')),
+      e('div',{style:{marginLeft:'auto',fontSize:10,color:'#8FAEC5',padding:'2px 8px',background:'rgba(255,255,255,.1)',borderRadius:99}},PTS.length+'명 등록')
+    ),
+    e(FilterBar,{f,setF,cnt:filtPts.length,total:PTS.length}),
+    e('div',{className:'statsbar'},
+      e('span',null,'필터 환자 ',e('b',null,filtPts.length),'명'),
+      e('span',null,'평균 RI ',e('b',null,avgRI)),
+      e('span',null,'남 ',e('b',null,filtPts.filter(p=>p.g==='남').length),' / 여 ',e('b',null,filtPts.filter(p=>p.g==='여').length)),
+      e('span',null,'뇌경색 ',e('b',null,filtPts.filter(p=>p.diag==='뇌경색').length),
+               ' · 뇌출혈 ',e('b',null,filtPts.filter(p=>p.diag==='뇌출혈').length),
+               ' · 척수손상 ',e('b',null,filtPts.filter(p=>p.diag==='척수손상').length)),
+      e('span',null,
+        ...Object.keys(DC).map(k=>e('span',{key:k,style:{marginRight:6}},
+          e('span',{style:{color:DC[k],fontWeight:700}},k),' ',
+          e('b',null,filtPts.filter(p=>p.ref===k).length)
+        ))
+      )
+    ),
+    e('div',{className:'ptlist'},
+      ...filtPts.map(p=>e(PtCard,{key:p.id,p,sel:false,onClick:()=>setSelId(p.id)})),
+      filtPts.length===0&&e('div',{style:{gridColumn:'1/-1',textAlign:'center',padding:'48px',color:'#94A3B8',fontSize:13}},'조건에 맞는 환자가 없습니다.')
+    )
+  );
+
+  /* ── DASHBOARD VIEW ── */
+  const rc=riColor(ri),rl=riLabel(ri);
+  const showEquip=cat==='전체'||cat==='장비';
+  const showImg=cat==='전체'||cat==='영상';
+  const showAsmt=cat!=='장비'&&cat!=='영상';
+  const dc=DC[selPt?.ref]||'#64748B';
+
+  return e('div',null,
+    e('div',{className:'appbar'},
+      e('button',{className:'ab',style:{marginRight:2},onClick:()=>setSelId(null)},'← 목록'),
+      e('div',{className:'al'},'AI'),
+      e('div',null,
+        e('div',{className:'at'},'재활의학과 통합 대시보드'),
+        e('div',{className:'as'},selPt?.name+' · '+selPt?.age+'세 '+selPt?.g+' · '+selPt?.ref+' / '+selPt?.dr+' 교수')
+      ),
+      e('button',{className:`ab${sidebar?' ab-on':''}`,style:{marginLeft:8},onClick:()=>setSidebar(p=>!p)},sidebar?'☰ 닫기':'☰ 목록'),
+      e('div',{style:{marginLeft:'auto',fontSize:10,color:'#8FAEC5',padding:'2px 8px',background:'rgba(255,255,255,.1)',borderRadius:99}},filtPts.length+'명 표시 중')
+    ),
+    /* ptbar: 9 fields including dept/ref/dr */
+    e('div',{className:'ptbar'},
+      ...[
+        ['환자명',selPt?.name],
+        ['등록번호',selPt?.id],
+        ['진단',selPt?.diag+' ('+selPt?.icd+')'],
+        ['입원일','2026.'+selPt?.admit],
+        ['재원',selPt?.days+'일'],
+        ['입원과',selPt?.dept+'과'],
+        ['협진/주치',e('span',{key:'ref',style:{color:dc,fontWeight:700}},selPt?.ref||'')],
+        ['담당교수',selPt?.dr+' 교수'],
+      ].map(([l,v])=>e('div',{key:l,className:'ptseg'},e('div',{className:'ptl'},l),e('div',{className:'ptv'},v)))
+    ),
+    selId===DEMO&&e('div',{className:'notice'},'★ 시연 데이터 (PT011 한○○). 다른 환자 클릭 시 동일 샘플 데이터가 표시됩니다. 실제 연동 시 환자별 개별 데이터가 반영됩니다.'),
+    /* split layout */
+    e('div',{className:'split'},
+      sidebar&&e('div',{className:'sidebar'},
+        e('div',{className:'sbhdr'},
+          e('span',null,filtPts.length+'명'),
+          e('button',{style:{fontSize:10,background:'none',border:'none',cursor:'pointer',color:'#64748B',fontFamily:'var(--font)'},onClick:()=>setSidebar(false)},'✕')
         ),
-        e("div",{className:"card"},
-          e("div",{className:"ch"},e("div",{className:"ct"},"AI 예후 예측"),e("div",{className:"cc"},"데이터 축적 후 실제 산출")),
-          e("div",null,...[["퇴원 방향","—","150건+","#185FA5"],["보행 독립","—","150건+","#0F6E56"],["기능 예후","—","300건+","#BA7517"],["연하 회복","—","100건+","#993C1D"]].map(([l,v,c,col])=>e("div",{key:l,className:"airow"},e("div",{className:"ail"},l),e("div",{style:{display:"flex",alignItems:"center"}},e("div",{className:"aiv",style:{color:col}},v),e("div",{className:"aic"},c+" 필요")))))
+        ...filtPts.map(p=>e(PtRow,{key:p.id,p,sel:p.id===selId,onClick:()=>setSelId(p.id)}))
+      ),
+      e('div',{className:'main'},
+        e('div',{className:'kstrip'},
+          e('div',{className:'kcard',style:{background:'#E1F5EE',border:'0.5px solid #1D9E75'}},e('div',{className:'kl',style:{color:'#0F6E56'}},'Recovery Index'),e('div',{className:'kv',style:{color:'#0F6E56'}},ri),e('div',{className:'ks'},rl+' 회복')),
+          e('div',{className:'kcard',style:{background:'#E6F1FB',border:'0.5px solid #378ADD'}},e('div',{className:'kl',style:{color:'#185FA5'}},'퇴원 예측'),e('div',{className:'kv',style:{color:'#185FA5',fontSize:11,paddingTop:5}},'데이터 축적'),e('div',{className:'ks'},'150건+')),
+          e('div',{className:'kcard',style:{background:'#E1F5EE',border:'0.5px solid #1D9E75'}},e('div',{className:'kl',style:{color:'#0F6E56'}},'보행 독립'),e('div',{className:'kv',style:{color:'#0F6E56',fontSize:11,paddingTop:5}},'데이터 축적'),e('div',{className:'ks'},'150건+')),
+          e('div',{className:'kcard',style:{background:'#FAEEDA',border:'0.5px solid #BA7517'}},e('div',{className:'kl',style:{color:'#BA7517'}},'기능 예후'),e('div',{className:'kv',style:{color:'#BA7517',fontSize:11,paddingTop:5}},'데이터 축적'),e('div',{className:'ks'},'300건+')),
+          e('div',{className:'kcard',style:{background:dc+'18',border:'0.5px solid '+dc+'55'}},e('div',{className:'kl',style:{color:dc}},'협진/주치과'),e('div',{className:'kv',style:{color:dc,fontSize:16,paddingTop:2}},selPt?.ref),e('div',{className:'ks'},selPt?.dr))
+        ),
+        e('div',{className:'frow'},...CATS.map(c=>e('button',{key:c,className:`ftab${cat===c?' on':''}`,style:cat===c?{background:CC[c]}:{},onClick:()=>setCat(c)},c))),
+        e('div',{className:'mg'},
+          e('div',null,
+            showAsmt&&e('div',{className:'card'},
+              e('div',{className:'ch'},e('div',{className:'ct'},'임상 평가 데이터'),e('div',{className:'cc'},'카드 클릭 → 날짜별 이력 · MCID 달성 여부')),
+              e('div',{className:'agrid'},...shown.map(a=>{
+                const last=a.hist[a.hist.length-1]?.v,delta=dv(a),met=delta!=null&&Math.abs(delta)>=a.mcid,up=delta!=null&&(a.hi?delta>0:delta<0);
+                return e('div',{key:a.id,className:'acard',style:met?{border:`1.5px solid ${up?'#1D9E75':'#E24B4A'}`,background:up?'#F0FDF8':'#FFF5F5'}:{},onClick:()=>setPop(a)},
+                  e('div',{className:'an'},a.name),e('div',{className:'av',style:{color:met?(up?'#0F6E56':'#A32D2D'):'#132743'}},last),
+                  e('div',{className:'am'},a.unit+(a.max?' / '+a.max:'')),
+                  delta!=null&&e('div',{className:'ad',style:{color:up?'#0F6E56':'#A32D2D'}},(up?'▲+':'▼')+(a.id==='tug'?Math.abs(delta).toFixed(1):Math.abs(delta))+a.unit)
+                );
+              }))
+            ),
+            showAsmt&&e('div',{className:'card'},
+              e('div',{className:'ch'},e('div',{className:'ct'},'회복 추이 그래프'),e('div',{className:'cc'},'탭 전환으로 항목별 변화 확인')),
+              e('div',{className:'gtabs'},...[['ri','Recovery Index'],['bbs','BBS'],['mbi','MBI'],['fac','FAC'],['fmaLe','FMA-LE'],['tug','TUG']].map(([id,lbl])=>e('button',{key:id,className:`gtab${gc===id?' on':''}`,style:gc===id?{background:GC[id]}:{},onClick:()=>setGc(id)},lbl))),
+              e('div',{className:'gw'},e(SvgLineChart,{data:gdata,color:GC[gc]||'#132743'}))
+            ),
+            showEquip&&e('div',{className:'card'},e('div',{className:'ch'},e('div',{className:'ct'},'장비 치료')),e('div',{className:'egrid'},...EQ.map(q=>e('div',{key:q.name,className:'ecard',style:{background:q.col,borderColor:q.fc}},e('div',{className:'en',style:{color:q.fc}},q.name),e('div',{className:'ev',style:{color:q.fc}},q.val),e('div',{className:'es'},q.sub))))),
+            showImg&&e('div',{className:'card'},e('div',{className:'ch'},e('div',{className:'ct'},'영상 자료'),e('div',{className:'cc'},'PACS 연동 시 클릭으로 영상 뷰어')),e('div',{className:'imgrid'},...IMG.map(im=>e('div',{key:im.a,className:'imcard'},e('div',{className:'imthumb',style:{background:im.bg}},im.a),e('div',{className:'iminfo'},e('div',{className:'iml'},im.l),e('div',{className:'imd'},im.d))))))
+          ),
+          e('div',null,
+            e('div',{className:'card'},
+              e('div',{className:'ch'},e('div',{className:'ct'},'Recovery Index')),
+              e('div',{style:{padding:'6px 12px 0'}},e('div',{className:'ribig',style:{color:rc}},ri),e('div',{className:'risub'},e('span',{className:'ribadge',style:{background:rc}},rl+' 회복'),e('span',{style:{fontSize:10,color:'#94A3B8'}},'/100'))),
+              e('div',{className:'rigrid'},...Object.entries(RID).map(([k,d])=>e('div',{key:k,className:'ridom',style:{background:d.bg}},e('div',{className:'rdn',style:{color:d.col}},d.lbl),e('div',{className:'rdb'},e('div',{className:'rdbf',style:{width:`${dom[k]||0}%`,background:d.col}})),e('div',{className:'rdv',style:{color:d.col}},dom[k]!=null?dom[k]+'/100':'미측정')))),
+              e('div',{className:'rifo'},e('div',{style:{fontWeight:600,marginBottom:4,color:'#132743'}},'산출 공식'),'① (현재−입원)÷(최대−입원)×100',e('br'),'② 측정 항목만 평균 → 영역 점수',e('br'),'③ ADL 35%·균형 30%·운동 20%·인지 15%')
+            ),
+            e('div',{className:'card'},e('div',{className:'ch'},e('div',{className:'ct'},'AI 예후 예측'),e('div',{className:'cc'},'데이터 축적 후')),
+              e('div',null,...[['퇴원 방향','—','150건+','#185FA5'],['보행 독립','—','150건+','#0F6E56'],['기능 예후','—','300건+','#BA7517'],['연하 회복','—','100건+','#993C1D']].map(([l,v,c,col])=>e('div',{key:l,className:'airow'},e('div',{className:'ail'},l),e('div',{style:{display:'flex',alignItems:'center'}},e('div',{className:'aiv',style:{color:col}},v),e('div',{className:'aic'},c)))))
+            )
+          )
         )
       )
     ),
-    pop&&e("div",{className:"popbg",onClick:()=>setPop(null)},e("div",{className:"pop",onClick:ev=>ev.stopPropagation()},
-      e("div",{className:"poph",style:{background:pop.cat==="물리치료"?"#0F6E56":"#185FA5"}},e("div",{className:"popt"},`${pop.name}  —  ${pop.full}  (날짜별 이력)`),e("button",{className:"popx",onClick:()=>setPop(null)},"✕")),
-      e("div",{className:"popb"},...pop.hist.map((h,i)=>{const pct=Math.round(h.v/pop.max*100),isLast=i===pop.hist.length-1,col=pop.cat==="물리치료"?"#534AB7":"#185FA5";return e("div",{key:h.d,className:"hrow"},e("div",{className:"hdate",style:{fontWeight:isLast?700:400,color:isLast?"#132743":"#94A3B8"}},h.d),e("div",{className:"hbar"},e("div",{className:"hfill",style:{width:`${pct}%`,background:col}})),e("div",{className:"hscore",style:{color:col}},`${h.v}${pop.unit}`));}),pop.fb&&e("div",{className:"fb"},pop.fb))
-    ))
+    pop&&e('div',{className:'popbg',onClick:()=>setPop(null)},
+      e('div',{className:'pop',onClick:ev=>ev.stopPropagation()},
+        e('div',{className:'poph',style:{background:pop.cat==='물리치료'?'#0F6E56':'#185FA5'}},e('div',{className:'popt'},pop.name+' — '+pop.full),e('button',{className:'popx',onClick:()=>setPop(null)},'✕')),
+        e('div',{className:'popb'},
+          ...pop.hist.map((h,i)=>{const pct=Math.round(h.v/pop.max*100),il=i===pop.hist.length-1,col=pop.cat==='물리치료'?'#534AB7':'#185FA5';return e('div',{key:h.d,className:'hrow'},e('div',{className:'hdate',style:{fontWeight:il?700:400,color:il?'#132743':'#94A3B8'}},h.d),e('div',{className:'hbar'},e('div',{className:'hfill',style:{width:`${pct}%`,background:col}})),e('div',{className:'hscore',style:{color:col}},h.v+pop.unit));}),
+          pop.fb&&e('div',{className:'fb'},pop.fb)
+        )
+      )
+    )
   );
 }
-ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(App));
+ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
 </script>
 </body>
 </html>
