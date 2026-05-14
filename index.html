@@ -8,33 +8,22 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-<script>if(window.pdfjsLib)pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
 <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
 <script>
-(function(){
-  const firebaseConfig = {
-    apiKey: "AIzaSyBhcGmEedc0Zn6k4R581r-I7oZ2iiAqJfI",
-    authDomain: "rehabdb-81500.firebaseapp.com",
-    projectId: "rehabdb-81500",
-    storageBucket: "rehabdb-81500.firebasestorage.app",
-    messagingSenderId: "136476431372",
-    appId: "1:136476431372:web:310afc4575d322f4844a29"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
-  // wrap compat API to match existing window._* interface
-  window._db = db;
+pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+try {
+  firebase.initializeApp({
+    apiKey:"AIzaSyBhcGmEedc0Zn6k4R581r-I7oZ2iiAqJfI",
+    authDomain:"rehabdb-81500.firebaseapp.com",
+    projectId:"rehabdb-81500",
+    storageBucket:"rehabdb-81500.firebasestorage.app",
+    messagingSenderId:"136476431372",
+    appId:"1:136476431372:web:310afc4575d322f4844a29"
+  });
+  window._db = firebase.firestore();
   window._fbReady = true;
-  window._collection = (db, col) => db.collection(col);
-  window._getDocs = (ref) => ref.get().then(snap => ({docs: snap.docs.map(d => ({id:d.id, data:()=>d.data()}))}));
-  window._addDoc = (ref, data) => ref.add(data);
-  window._setDoc = (ref, data) => ref.set(data, {merge:true});
-  window._doc = (db, col, id) => db.collection(col).doc(id);
-  window._onSnapshot = (ref, cb) => ref.onSnapshot(snap => cb({docs: snap.docs.map(d => ({id:d.id, data:()=>d.data()}))}));
-  window._deleteDoc = (ref) => ref.delete();
-  window.dispatchEvent(new Event('fbReady'));
-})();
+} catch(err) { console.error('Firebase init error:', err); }
 </script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap');
@@ -44,143 +33,123 @@ body{font-family:var(--font);background:#EEF2F7;min-height:100vh;}
 .appbar{background:var(--navy);padding:9px 16px;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:200;box-shadow:0 2px 12px rgba(0,0,0,.35);}
 .al{width:28px;height:28px;border-radius:7px;background:var(--teal);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0;}
 .at{font-size:12px;font-weight:700;color:#fff;}.as{font-size:9px;color:#8FAEC5;margin-top:1px;}
-.ab{font-size:10px;background:rgba(255,255,255,.15);color:#fff;padding:3px 10px;border-radius:99px;cursor:pointer;border:0.5px solid rgba(255,255,255,.3);font-family:var(--font);white-space:nowrap;}
+.ab{font-size:10px;background:rgba(255,255,255,.15);color:#fff;padding:3px 10px;border-radius:99px;cursor:pointer;border:0.5px solid rgba(255,255,255,.3);font-family:var(--font);}
 .ab-g{background:var(--teal2);border-color:var(--teal2);}
-.sync-dot{width:8px;height:8px;border-radius:50%;background:#22c55e;display:inline-block;margin-right:4px;animation:pulse 2s infinite;}
-.sync-dot.off{background:#ef4444;animation:none;}
+.sdot{width:8px;height:8px;border-radius:50%;background:#22c55e;display:inline-block;margin-right:4px;animation:pulse 2s infinite;}
+.sdot.off{background:#ef4444;animation:none;}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
-/* Filter bar */
-.fltbar{background:#fff;border-bottom:0.5px solid var(--border);padding:6px 14px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.fltbar{background:#fff;border-bottom:0.5px solid var(--border);padding:6px 14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
 .fg{display:flex;align-items:center;gap:3px;flex-wrap:wrap;}
 .flbl{font-size:9px;font-weight:700;color:var(--gray);white-space:nowrap;margin-right:1px;}
-.fopt{font-size:10px;padding:3px 9px;border-radius:99px;border:0.5px solid var(--border);background:var(--off);cursor:pointer;font-family:var(--font);transition:all .15s;}
+.fopt{font-size:10px;padding:3px 9px;border-radius:99px;border:0.5px solid var(--border);background:var(--off);cursor:pointer;font-family:var(--font);}
 .fopt.on{color:#fff;border-color:transparent;}
-/* Stats */
-.statsbar{background:#FAFBFC;border-bottom:0.5px solid var(--border);padding:5px 14px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:10px;color:var(--gray);}
-.statsbar b{color:#132743;}
-/* Patient list */
-.ptlist{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:10px 14px 20px;}
+.sbar2{background:#FAFBFC;border-bottom:0.5px solid var(--border);padding:5px 14px;display:flex;gap:14px;flex-wrap:wrap;font-size:10px;color:var(--gray);}
+.sbar2 b{color:#132743;}
+.ptgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:10px 14px 20px;}
 .ptcard{background:#fff;border:0.5px solid var(--border);border-radius:12px;padding:11px 12px;cursor:pointer;transition:all .18s;}
 .ptcard:hover{box-shadow:0 3px 16px rgba(0,0,0,.12);border-color:var(--teal2);}
-/* Detail view */
-.split{display:flex;align-items:flex-start;}
-.sidebar{width:250px;flex-shrink:0;border-right:0.5px solid var(--border);background:#fff;overflow-y:auto;max-height:calc(100vh - 56px);position:sticky;top:56px;}
-.sbhdr{padding:8px 12px;border-bottom:0.5px solid var(--border);font-size:11px;font-weight:700;color:#132743;display:flex;justify-content:space-between;align-items:center;background:var(--off);}
-.ptrow{padding:8px 12px;border-bottom:0.5px solid #F1F5F9;cursor:pointer;}
-.ptrow:hover{background:#F8FAFC;}.ptrow.sel{background:var(--tealLt);border-left:3px solid var(--teal2);}
+.split{display:flex;}
+.sb{width:250px;flex-shrink:0;border-right:0.5px solid var(--border);background:#fff;overflow-y:auto;max-height:calc(100vh - 56px);position:sticky;top:56px;}
+.sbh{padding:8px 12px;border-bottom:0.5px solid var(--border);font-size:11px;font-weight:700;color:#132743;display:flex;justify-content:space-between;align-items:center;background:var(--off);}
+.ptr{padding:8px 12px;border-bottom:0.5px solid #F1F5F9;cursor:pointer;}
+.ptr:hover{background:#F8FAFC;}.ptr.on{background:var(--tealLt);border-left:3px solid var(--teal2);}
 .main{flex:1;min-width:0;padding:14px;}
-/* Cards */
 .card{background:#fff;border:0.5px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:12px;}
 .ch{display:flex;align-items:center;justify-content:space-between;padding:10px 14px 8px;}
 .ct{font-size:12px;font-weight:700;color:var(--navy);}.cc{font-size:9px;color:var(--gray);}
-/* Form */
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 14px 14px;}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 14px 14px;}
 .fld{display:flex;flex-direction:column;gap:4px;}
 .fld label{font-size:10px;color:var(--gray);font-weight:600;}
-.inp{padding:7px 10px;border:0.5px solid #CBD5E1;border-radius:7px;font-family:var(--font);font-size:12px;outline:none;transition:border .15s;width:100%;}
+.inp{padding:7px 10px;border:0.5px solid #CBD5E1;border-radius:7px;font-family:var(--font);font-size:12px;outline:none;width:100%;}
 .inp:focus{border-color:var(--teal2);}
-.inp-full{grid-column:1/-1;}
-/* Assessment grid */
+.full{grid-column:1/-1;}
 .agrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:0 14px 14px;}
-.acard{border-radius:8px;padding:10px;background:var(--off);border:0.5px solid var(--border);}
-.acard label{font-size:10px;color:var(--gray);display:block;margin-bottom:4px;font-weight:600;}
-.acard .inp{font-size:14px;font-weight:700;}
-/* Eval history */
-.ehist{padding:0 14px 14px;}
+.ac{border-radius:8px;padding:10px;background:var(--off);border:0.5px solid var(--border);}
+.ac label{font-size:10px;color:var(--gray);display:block;margin-bottom:4px;font-weight:600;}
 .hrow{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
 .hdate{font-size:10px;color:var(--gray);width:44px;flex-shrink:0;}
 .hbar{flex:1;height:8px;background:#F1F5F9;border-radius:99px;overflow:hidden;}
 .hfill{height:100%;border-radius:99px;}
 .hval{font-size:11px;font-weight:700;width:44px;text-align:right;}
-/* Upload zone */
 .upzone{border:2px dashed var(--border);border-radius:10px;padding:20px;text-align:center;cursor:pointer;transition:all .2s;background:var(--off);margin:0 14px 14px;}
-.upzone:hover{border-color:var(--teal2);background:var(--tealLt);}
-.parse-log{font-size:10px;color:#475569;background:var(--off);border-radius:6px;padding:8px;margin:0 14px 14px;max-height:100px;overflow-y:auto;line-height:2;}
-/* Modal */
+.upzone:hover,.upzone.drag{border-color:var(--teal2);background:var(--tealLt);}
+.plog{font-size:10px;color:#475569;background:var(--off);border-radius:6px;padding:8px;margin:0 14px 10px;max-height:120px;overflow-y:auto;line-height:2.1;}
 .popbg{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;display:flex;align-items:center;justify-content:center;padding:14px;}
-.pop{background:#fff;border-radius:14px;width:100%;max-width:520px;max-height:90vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 8px 40px rgba(0,0,0,.25);}
+.pop{background:#fff;border-radius:14px;width:100%;max-width:540px;max-height:90vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 8px 40px rgba(0,0,0,.25);}
 .poph{padding:12px 14px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
 .popt{font-size:13px;font-weight:700;color:#fff;}
 .popx{background:rgba(255,255,255,.25);border:none;color:#fff;width:24px;height:24px;border-radius:50%;cursor:pointer;font-size:14px;font-family:var(--font);}
 .popb{padding:14px;overflow-y:auto;}
-/* Buttons */
-.btn{padding:8px 18px;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);color:#fff;transition:opacity .15s;}
-.btn:hover{opacity:.88;}
-.btn-g{background:var(--teal2);}
-.btn-b{background:var(--blue);}
-.btn-r{background:var(--red);}
-.btn-gray{background:#94A3B8;color:#fff;}
-/* Notice */
+.btn{padding:8px 18px;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);color:#fff;}
+.bg{background:var(--teal2);}.bb{background:var(--blue);}.br{background:var(--red);}.bgray{background:#94A3B8;}
 .notice{background:var(--amberLt);border:0.5px solid var(--amber);border-radius:6px;padding:5px 12px;margin:6px 14px 0;font-size:10px;color:var(--amber);}
-/* DC */
-.dc-RM{color:#0F6E56;}.dc-NU{color:#534AB7;}.dc-NS{color:#185FA5;}.dc-OS{color:#BA7517;}
-@media(max-width:1100px){.ptlist{grid-template-columns:repeat(3,1fr);}}
-@media(max-width:800px){.ptlist{grid-template-columns:repeat(2,1fr);}.form-grid{grid-template-columns:1fr;}.agrid{grid-template-columns:repeat(2,1fr);}}
+.preview-box{border:1.5px solid var(--teal2);border-radius:10px;margin:10px 14px 4px;overflow:hidden;}
+.preview-hdr{background:var(--teal);padding:8px 12px;display:flex;align-items:center;justify-content:space-between;}
+.preview-rows{max-height:200px;overflow-y:auto;}
+.preview-row{padding:8px 12px;border-bottom:0.5px solid var(--border);font-size:11px;}
+.preview-ftr{padding:8px 12px;background:var(--off);display:flex;gap:8px;flex-wrap:wrap;}
+@media(max-width:1100px){.ptgrid{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:800px){.ptgrid{grid-template-columns:repeat(2,1fr);}.fgrid{grid-template-columns:1fr;}.agrid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:600px){.ptgrid{grid-template-columns:1fr;}.split{flex-direction:column;}.sb{width:100%;max-height:200px;position:static;}}
 </style>
 </head>
 <body>
 <div id="root"></div>
 <script>
 const {useState,useEffect,useRef,useMemo}=React;
-const e=(t,p,...c)=>React.createElement(t,p,...c);
-
-const DC={RM:'#0F6E56',NU:'#534AB7',NS:'#185FA5',OS:'#BA7517'};
-const DIAG_LIST=['뇌경색','뇌출혈','척수손상','외상성뇌손상','파킨슨병','기타'];
-const REF_LIST=['RM','NU','NS','OS','CS'];
-const EVAL_FIELDS=[
-  {id:'bbs',label:'BBS',unit:'점',max:56},
-  {id:'mbi',label:'MBI',unit:'점',max:100},
-  {id:'fac',label:'FAC',unit:'단계',max:5},
-  {id:'fmaLe',label:'FMA-LE',unit:'점',max:34},
-  {id:'fmaUe',label:'FMA-UE',unit:'점',max:66},
-  {id:'mmse',label:'MMSE-K',unit:'점',max:30},
-  {id:'tug',label:'TUG',unit:'초',max:null},
-  {id:'masa',label:'MASA',unit:'점',max:200},
-  {id:'mmt',label:'MMT(Rt)',unit:'등급',max:5},
-  {id:'6mwt',label:'6MWT',unit:'m',max:600},
+const r=(t,p,...c)=>React.createElement(t,p,...c);
+const DC={RM:'#0F6E56',NU:'#534AB7',NS:'#185FA5',OS:'#BA7517',CS:'#993C1D'};
+const DIAGS=['뇌경색','뇌출혈','척수손상','외상성뇌손상','파킨슨병','기타'];
+const REFS=['RM','NU','NS','OS','CS'];
+const EFIELDS=[
+  {id:'bbs',lbl:'BBS',unit:'점',max:56},
+  {id:'mbi',lbl:'MBI',unit:'점',max:100},
+  {id:'fac',lbl:'FAC',unit:'단계',max:5},
+  {id:'fmaLe',lbl:'FMA-LE',unit:'점',max:34},
+  {id:'fmaUe',lbl:'FMA-UE',unit:'점',max:66},
+  {id:'mmse',lbl:'MMSE-K',unit:'점',max:30},
+  {id:'tug',lbl:'TUG',unit:'초',max:null},
+  {id:'masa',lbl:'MASA',unit:'점',max:200},
+  {id:'mmt',lbl:'MMT(Rt)',unit:'등급',max:5},
+  {id:'6mwt',lbl:'6MWT',unit:'m',max:600},
 ];
 
-function riColor(v){return v>=75?'#0F6E56':v>=50?'#185FA5':v>=25?'#BA7517':'#A32D2D';}
+function rc(v){return v>=75?'#0F6E56':v>=50?'#185FA5':v>=25?'#BA7517':'#A32D2D';}
 
-/* ── Firebase wrapper ── */
-async function fbGetPts(){
-  const snap = await window._db.collection('patients').get();
-  return snap.docs.map(d=>({id:d.id,...d.data()}));
-}
-async function fbSavePt(pt){
-  const {id,...data}=pt;
-  if(id){
-    await window._db.collection('patients').doc(id).set(data,{merge:true});
-    return id;
-  } else {
-    const ref=await window._db.collection('patients').add(data);
-    return ref.id;
+// Firebase helpers
+const DB=()=>window._db;
+async function fbAll(){const s=await DB().collection('patients').get();return s.docs.map(d=>({id:d.id,...d.data()}));}
+async function fbSave(pt){const{id,...data}=pt;if(id){await DB().collection('patients').doc(id).set(data,{merge:true});return id;}else{const ref=await DB().collection('patients').add(data);return ref.id;}}
+async function fbDel(id){await DB().collection('patients').doc(id).delete();}
+function fbListen(cb){return DB().collection('patients').onSnapshot(s=>cb(s.docs.map(d=>({id:d.id,...d.data()}))));}
+
+// PDF text extractor
+async function pdfToText(buf){
+  const pdf=await pdfjsLib.getDocument({data:buf}).promise;
+  let txt='';
+  for(let i=1;i<=pdf.numPages;i++){
+    const pg=await pdf.getPage(i);
+    const tc=await pg.getTextContent();
+    txt+=tc.items.map(x=>x.str).join(' ')+'\n';
   }
-}
-async function fbDeletePt(id){
-  await window._db.collection('patients').doc(id).delete();
-}
-function fbSubscribe(cb){
-  return window._db.collection('patients').onSnapshot(snap=>{
-    cb(snap.docs.map(d=>({id:d.id,...d.data()})));
-  });
+  return txt;
 }
 
-/* ── CSV/XLSX parser ── */
-function parseRows(text){
-  const lines=text.trim().split(/\r?\n/).filter(l=>l.trim());
+// CSV row parser
+function parseCSV(text){
+  const lines=text.trim().split('\n').map(l=>l.trim()).filter(l=>l);
   if(!lines.length)return{pts:[],evals:[]};
   const hdrs=lines[0].split(',').map(h=>h.trim().replace(/"/g,'').toLowerCase());
-  const isPatientSheet=hdrs.some(h=>/이름|name|환자|등록/.test(h));
+  const isPatSheet=hdrs.some(h=>/이름|name|환자|등록/.test(h));
   const pts=[],evals=[];
-  if(isPatientSheet){
+  if(isPatSheet){
     for(const ln of lines.slice(1)){
       const c=ln.split(',').map(s=>s.trim().replace(/"/g,''));
       if(!c[0])continue;
-      const row={};
+      const row={evals:{}};
       hdrs.forEach((h,i)=>{
         if(/이름|name/.test(h))row.name=c[i];
-        else if(/등록|id|번호/.test(h))row.ptId=c[i];
+        else if(/등록|ptid|번호/.test(h))row.ptId=c[i];
         else if(/나이|age/.test(h))row.age=parseInt(c[i])||0;
         else if(/성별|gender|sex/.test(h))row.g=c[i];
         else if(/진단|diag/.test(h))row.diag=c[i];
@@ -189,29 +158,30 @@ function parseRows(text){
         else if(/협진|ref|주치/.test(h))row.ref=c[i];
         else if(/교수|dr|담당/.test(h))row.dr=c[i];
         else{
-          const ef=EVAL_FIELDS.find(f=>f.label.toLowerCase()===h||f.id===h);
-          if(ef&&c[i]){evals.push({ptId:row.ptId||row.name,field:ef.id,val:parseFloat(c[i]),date:row.admit||'—'});}
+          const ef=EFIELDS.find(f=>f.lbl.toLowerCase()===h||f.id===h);
+          if(ef&&c[i]){
+            if(!row.evals[ef.id])row.evals[ef.id]=[];
+            row.evals[ef.id].push({date:row.admit||'00.00',v:parseFloat(c[i])});
+          }
         }
       });
       if(row.name||row.ptId)pts.push(row);
     }
-  } else {
-    // eval-only sheet: 날짜,항목,값 or 날짜,BBS,MBI,...
-    const di=hdrs.findIndex(h=>/날짜|date/.test(h));
-    const ni=hdrs.findIndex(h=>/항목|평가|assessment/.test(h));
-    const vi=hdrs.findIndex(h=>/값|점수|score|value/.test(h));
-    if(di>=0&&ni>=0&&vi>=0){
-      for(const ln of lines.slice(1)){
-        const c=ln.split(',').map(s=>s.trim().replace(/"/g,''));
-        const ef=EVAL_FIELDS.find(f=>f.label.toLowerCase()===c[ni]?.toLowerCase()||f.id===c[ni]?.toLowerCase());
+  }
+  // eval-only rows
+  const di=hdrs.findIndex(h=>/날짜|date/.test(h));
+  const ni=hdrs.findIndex(h=>/항목|평가|assessment/.test(h));
+  const vi=hdrs.findIndex(h=>/값|점수|score|value/.test(h));
+  if(!isPatSheet&&di>=0){
+    for(const ln of lines.slice(1)){
+      const c=ln.split(',').map(s=>s.trim().replace(/"/g,''));
+      if(ni>=0&&vi>=0){
+        const ef=EFIELDS.find(f=>f.lbl.toLowerCase()===c[ni]?.toLowerCase()||f.id===c[ni]?.toLowerCase());
         if(ef)evals.push({field:ef.id,val:parseFloat(c[vi]),date:c[di]});
-      }
-    } else if(di>=0){
-      for(const ln of lines.slice(1)){
-        const c=ln.split(',').map(s=>s.trim().replace(/"/g,''));
+      } else {
         hdrs.forEach((h,i)=>{
-          const ef=EVAL_FIELDS.find(f=>f.label.toLowerCase()===h||f.id===h);
-          if(ef&&c[i]){evals.push({field:ef.id,val:parseFloat(c[i]),date:c[di]});}
+          const ef=EFIELDS.find(f=>f.lbl.toLowerCase()===h||f.id===h);
+          if(ef&&c[i])evals.push({field:ef.id,val:parseFloat(c[i]),date:c[di]});
         });
       }
     }
@@ -219,401 +189,269 @@ function parseRows(text){
   return{pts,evals};
 }
 
-/* ── Sparkline ── */
-function Spark({data,color}){
-  if(!data||data.length<2)return null;
-  const W=52,H=18,mn=Math.min(...data),mx=Math.max(...data),range=mx-mn||1;
-  const pts=data.map((v,i)=>`${i/(data.length-1)*W},${H-2-(v-mn)/range*(H-5)}`).join(' ');
-  return React.createElement('svg',{width:W,height:H,style:{display:'block'}},
-    React.createElement('polyline',{points:pts,fill:'none',stroke:color,strokeWidth:1.8,strokeLinejoin:'round',strokeLinecap:'round'})
-  );
-}
-
-/* ── Patient Card ── */
-function PtCard({p,onClick}){
-  const evals=p.evals||{};
-  const scores=EVAL_FIELDS.map(f=>{const h=evals[f.id];return h&&h.length?h[h.length-1].v:null;}).filter(v=>v!=null);
-  const ri=scores.length?Math.round(scores.reduce((a,b)=>a+b,0)/scores.length*10):p.ri||0;
-  const rc=riColor(ri);
-  const dc=DC[p.ref]||'#64748B';
-  return e('div',{className:'ptcard',onClick},
-    e('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:5}},
-      e('div',null,e('div',{style:{fontSize:14,fontWeight:700,color:'#132743'}},p.name||'이름없음'),e('div',{style:{fontSize:10,color:'#64748B',marginTop:1}},(p.age||'—')+'세 · '+(p.g||'—'))),
-      e('span',{style:{fontSize:9,fontWeight:700,padding:'2px 7px',borderRadius:99,background:dc+'18',color:dc,border:'0.5px solid '+dc+'44'}},p.ref||'—')
-    ),
-    e('div',{style:{fontSize:10,color:'#475569',marginBottom:1}},p.diag||'진단 미입력'),
-    e('div',{style:{fontSize:9,color:'#94A3B8',marginBottom:8}},p.dr?p.dr+' 교수':'담당 미입력'),
-    e('div',{style:{display:'flex',alignItems:'flex-end',justifyContent:'space-between',marginBottom:4}},
-      e('div',null,e('div',{style:{fontSize:9,color:'#94A3B8'}},'최근 평균 점수'),e('div',{style:{fontSize:20,fontWeight:700,color:rc}},ri)),
-      e('div',{style:{fontSize:9,color:'#94A3B8',textAlign:'right'}},(p.days||0)+'일째')
-    ),
-    e('div',{style:{height:4,background:'#F1F5F9',borderRadius:99,overflow:'hidden'}},
-      e('div',{style:{width:Math.min(100,ri)+'%',height:'100%',background:rc,borderRadius:99}})
-    )
-  );
-}
-
-/* ── Patient Row (sidebar) ── */
-function PtRow({p,sel,onClick}){
-  const dc=DC[p.ref]||'#64748B';
-  return e('div',{className:`ptrow${sel?' sel':''}`,onClick},
-    e('div',{style:{display:'flex',alignItems:'center',justifyContent:'space-between'}},
-      e('div',null,
-        e('div',{style:{fontSize:11,fontWeight:700,color:'#132743'}},p.name,' ',e('span',{style:{fontSize:9,color:'#94A3B8'}},p.age+'세 '+p.g)),
-        e('div',{style:{fontSize:9,marginTop:1}},e('span',{style:{color:dc,fontWeight:700}},p.ref),' · ',e('span',{style:{color:'#64748B'}},p.dr||'—'))
-      ),
-      e('div',{style:{fontSize:9,color:'#94A3B8'}},p.days+'일')
-    ),
-    e('div',{style:{fontSize:9,color:'#475569',marginTop:2}},p.diag||'—')
-  );
-}
-
-/* ── Add/Edit Patient Modal ── */
-function PtModal({pt,onClose,onSave}){
-  const isNew=!pt.id;
-  const[form,setForm]=useState({name:'',ptId:'',age:'',g:'남',diag:'뇌경색',icd:'',admit:'',days:'',dept:'RM',ref:'RM',dr:'',...pt});
-  const set=(k,v)=>setForm(p=>({...p,[k]:v}));
-  return e('div',{className:'popbg',onClick:onClose},
-    e('div',{className:'pop',onClick:ev=>ev.stopPropagation()},
-      e('div',{className:'poph',style:{background:isNew?'#0F6E56':'#185FA5'}},
-        e('div',{className:'popt'},isNew?'+ 새 환자 등록':'환자 정보 수정'),
-        e('button',{className:'popx',onClick:onClose},'✕')
-      ),
-      e('div',{className:'popb'},
-        e('div',{className:'form-grid'},
-          e('div',{className:'fld'},e('label',null,'환자명 *'),e('input',{className:'inp',value:form.name,placeholder:'홍길동',onChange:ev=>set('name',ev.target.value)})),
-          e('div',{className:'fld'},e('label',null,'등록번호'),e('input',{className:'inp',value:form.ptId,placeholder:'1234567',onChange:ev=>set('ptId',ev.target.value)})),
-          e('div',{className:'fld'},e('label',null,'나이'),e('input',{className:'inp',type:'number',value:form.age,onChange:ev=>set('age',ev.target.value)})),
-          e('div',{className:'fld'},e('label',null,'성별'),e('select',{className:'inp',value:form.g,onChange:ev=>set('g',ev.target.value)},e('option',null,'남'),e('option',null,'여'))),
-          e('div',{className:'fld inp-full'},e('label',null,'진단명'),e('select',{className:'inp',value:form.diag,onChange:ev=>set('diag',ev.target.value)},...DIAG_LIST.map(d=>e('option',{key:d},d)))),
-          e('div',{className:'fld'},e('label',null,'ICD 코드'),e('input',{className:'inp',value:form.icd,placeholder:'I63',onChange:ev=>set('icd',ev.target.value)})),
-          e('div',{className:'fld'},e('label',null,'입원일'),e('input',{className:'inp',value:form.admit,placeholder:'2026.03.10',onChange:ev=>set('admit',ev.target.value)})),
-          e('div',{className:'fld'},e('label',null,'재원일수'),e('input',{className:'inp',type:'number',value:form.days,onChange:ev=>set('days',ev.target.value)})),
-          e('div',{className:'fld'},e('label',null,'협진/주치과'),e('select',{className:'inp',value:form.ref,onChange:ev=>set('ref',ev.target.value)},...REF_LIST.map(r=>e('option',{key:r},r)))),
-          e('div',{className:'fld'},e('label',null,'담당교수'),e('input',{className:'inp',value:form.dr,placeholder:'김재활',onChange:ev=>set('dr',ev.target.value)}))
-        ),
-        e('div',{style:{display:'flex',gap:8,padding:'0 14px 4px'}},
-          e('button',{className:'btn btn-g',style:{flex:1},onClick:async()=>{
-            if(!form.name){alert('환자명을 입력해주세요');return;}
-            await onSave({...form,age:parseInt(form.age)||0,days:parseInt(form.days)||0,evals:pt.evals||{}});
-            onClose();
-          }},isNew?'등록':'저장'),
-          e('button',{className:'btn btn-gray',onClick:onClose},'취소')
-        )
-      )
-    )
-  );
-}
-
-/* ── Eval Entry Modal ── */
-function EvalModal({pt,onClose,onSave}){
-  const[date,setDate]=useState(new Date().toLocaleDateString('ko-KR',{month:'2-digit',day:'2-digit'}).replace('. ','').replace('.','')||'');
-  const[vals,setVals]=useState({});
-  const setV=(id,v)=>setVals(p=>({...p,[id]:v}));
-  return e('div',{className:'popbg',onClick:onClose},
-    e('div',{className:'pop',onClick:ev=>ev.stopPropagation()},
-      e('div',{className:'poph',style:{background:'#534AB7'}},
-        e('div',{className:'popt'},'📋 평가 입력 — '+pt.name),
-        e('button',{className:'popx',onClick:onClose},'✕')
-      ),
-      e('div',{className:'popb'},
-        e('div',{style:{marginBottom:10}},
-          e('label',{style:{fontSize:10,color:'#64748B',display:'block',marginBottom:4,fontWeight:600}},'측정일'),
-          e('input',{className:'inp',value:date,placeholder:'04.17',onChange:ev=>setDate(ev.target.value),style:{width:140}})
-        ),
-        e('div',{className:'agrid'},
-          ...EVAL_FIELDS.map(f=>e('div',{key:f.id,className:'acard'},
-            e('label',null,f.label+(f.max?' (max '+f.max+')':''),' ',e('span',{style:{color:'#94A3B8',fontSize:9}},f.unit)),
-            e('input',{className:'inp',type:'number',placeholder:'입력',value:vals[f.id]||'',onChange:ev=>setV(f.id,ev.target.value)})
-          ))
-        ),
-        e('div',{style:{padding:'4px 0'}},
-          e('button',{className:'btn btn-g',style:{width:'100%'},onClick:async()=>{
-            if(!date){alert('측정일을 입력해주세요');return;}
-            const newEvals={...((pt.evals)||{})};
-            Object.entries(vals).forEach(([id,v])=>{
-              if(v==='')return;
-              if(!newEvals[id])newEvals[id]=[];
-              if(!newEvals[id].some(h=>h.date===date)){
-                newEvals[id]=[...newEvals[id],{date,v:parseFloat(v)}].sort((a,b)=>a.date.localeCompare(b.date));
-              }
-            });
-            await onSave({...pt,evals:newEvals});
-            onClose();
-          }},'저장')
-        )
-      )
-    )
-  );
-}
-
-/* ── Upload Modal ── */
-/* ── PDF.js text extractor ── */
-async function extractPdfText(arrayBuffer){
-  const pdf=await pdfjsLib.getDocument({data:arrayBuffer}).promise;
-  let full='';
-  for(let i=1;i<=pdf.numPages;i++){
-    const page=await pdf.getPage(i);
-    const tc=await page.getTextContent();
-    full+=tc.items.map(it=>it.str).join(' ')+'
-';
-  }
-  return full;
-}
-
-/* ── Claude AI PDF parser (requires backend proxy — disabled for GitHub Pages) ── */
-async function parseWithClaude(base64Data, mediaType, filename){
-  const prompt=`이 파일은 재활의학과 환자 평가 자료입니다.
-파일에서 다음 정보를 추출하여 반드시 JSON만 반환하세요 (다른 텍스트 없이):
-{
-  "patients": [
-    {
-      "name": "환자명",
-      "ptId": "등록번호",
-      "age": 나이(숫자),
-      "g": "남 또는 여",
-      "diag": "진단명",
-      "icd": "ICD코드",
-      "admit": "입원일(MM.DD 형식)",
-      "days": 재원일수(숫자),
-      "ref": "협진과(RM/NU/NS/OS 중 하나)",
-      "dr": "담당교수명",
-      "evals": {
-        "bbs": [{"date":"MM.DD","v":숫자}],
-        "mbi": [{"date":"MM.DD","v":숫자}],
-        "fac": [{"date":"MM.DD","v":숫자}],
-        "fmaLe": [{"date":"MM.DD","v":숫자}],
-        "fmaUe": [{"date":"MM.DD","v":숫자}],
-        "mmse": [{"date":"MM.DD","v":숫자}],
-        "tug": [{"date":"MM.DD","v":숫자}],
-        "masa": [{"date":"MM.DD","v":숫자}],
-        "mmt": [{"date":"MM.DD","v":숫자}],
-        "6mwt": [{"date":"MM.DD","v":숫자}]
-      }
-    }
-  ]
-}
-없는 항목은 빈 배열([]) 또는 빈 문자열("")로 두세요. 숫자만 있는 항목은 숫자로, 날짜가 없으면 "00.00"으로 표기.`;
-
-  const contentBlock = mediaType === 'text/plain'
-    ? {type:'text', text: atob(base64Data)}
-    : {type:'document', source:{type:'base64', media_type:mediaType, data:base64Data}};
-
-  const resp = await fetch('https://api.anthropic.com/v1/messages',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({
-      model:'claude-sonnet-4-20250514',
-      max_tokens:2000,
-      messages:[{role:'user',content:[contentBlock,{type:'text',text:prompt}]}]
-    })
-  });
-  const data = await resp.json();
-  const text = data.content?.map(c=>c.text||'').join('');
-  const clean = text.replace(/```json|```/g,'').trim();
-  return JSON.parse(clean);
-}
-
-/* ── Free-text PDF parser (keyword scan) ── */
+// Free-text PDF keyword parser
 function parseFreeText(text){
-  const lines=text.split(/\n/).map(l=>l.trim()).filter(l=>l);
+  const lines=text.split('\n').map(l=>l.trim()).filter(l=>l);
   const pt={name:'',ptId:'',age:0,g:'',diag:'',icd:'',admit:'',days:0,ref:'',dr:'',evals:{}};
-  const evalMap={BBS:'bbs',MBI:'mbi',FAC:'fac','FMA-LE':'fmaLe','FMA-UE':'fmaUe',
-    'MMSE':'mmse','MMSE-K':'mmse',TUG:'tug',MASA:'masa','MMT':'mmt','6MWT':'6mwt'};
-
   for(const line of lines){
-    // 이름
-    if(!pt.name&&/환자명|이름|성명/.test(line)){const m=line.match(/[가-힣]{2,5}(?=\s|$)/);if(m)pt.name=m[0];}
-    // 등록번호
+    if(!pt.name&&/(환자명|이름|성명)/.test(line)){const m=line.match(/[\uAC00-\uD7A3]{2,5}/g);if(m&&m.length)pt.name=m[m.length-1];}
     if(!pt.ptId){const m=line.match(/등록번호[^\d]*(\d{5,8})/);if(m)pt.ptId=m[1];}
-    // 나이
     if(!pt.age){const m=line.match(/(\d{1,3})\s*세/);if(m)pt.age=parseInt(m[1]);}
-    // 성별
-    if(!pt.g){if(/남성|남자|\bM\b/.test(line))pt.g='남';else if(/여성|여자|\bF\b/.test(line))pt.g='여';}
-    // 진단
-    if(!pt.diag){
-      const dm=line.match(/(뇌경색|뇌출혈|척수손상|외상성뇌손상|파킨슨)/);if(dm)pt.diag=dm[1];
-      const icdm=line.match(/([A-Z]\d{2}(?:\.\d{1,2})?)/);if(icdm)pt.icd=icdm[1];
-    }
-    // 입원일
+    if(!pt.g){if(/(남성|남자)/.test(line))pt.g='남';else if(/(여성|여자)/.test(line))pt.g='여';}
+    if(!pt.diag){const m=line.match(/(뇌경색|뇌출혈|척수손상|외상성뇌손상|파킨슨)/);if(m)pt.diag=m[1];}
+    if(!pt.icd){const m=line.match(/([A-Z]\d{2}(?:\.\d{1,2})?)/);if(m)pt.icd=m[1];}
     if(!pt.admit){const m=line.match(/(\d{4})[./-](\d{1,2})[./-](\d{1,2})/);if(m)pt.admit=m[2].padStart(2,'0')+'.'+m[3].padStart(2,'0');}
-    // 재원
     if(!pt.days){const m=line.match(/재원\s*(\d+)/);if(m)pt.days=parseInt(m[1]);}
-    // 담당/협진
-    if(!pt.dr){const m=line.match(/(?:담당|교수)[^가-힣]*([가-힣]{2,4})\s*교수/);if(m)pt.dr=m[1];}
+    if(!pt.dr){const m=line.match(/(담당|교수)[^\uAC00-\uD7A3]*([\uAC00-\uD7A3]{2,4})\s*교수/);if(m)pt.dr=m[2];}
     if(!pt.ref){const m=line.match(/\b(RM|NU|NS|OS|CS)\b/);if(m)pt.ref=m[1];}
-    // 평가 점수
-    for(const[label,id] of Object.entries(evalMap)){
-      const re=new RegExp(label+'[^\\d]*(\\d{1,3})(?:\\s*(?:점|초|m|단계|등급))?');
+    EFIELDS.forEach(f=>{
+      const re=new RegExp(f.lbl.replace('-','\\-')+'[^\\d]*(\\d{1,3})(?:\\s*(?:점|초|m|단계|등급))?');
       const m=line.match(re);
       if(m){
-        const dateM=line.match(/(\d{2})[.](\d{2})/);
-        const date=dateM?dateM[0]:'00.00';
-        if(!pt.evals[id])pt.evals[id]=[];
-        if(!pt.evals[id].some(h=>h.date===date))
-          pt.evals[id].push({date,v:parseFloat(m[1])});
+        const dm=line.match(/(\d{2})\.(\d{2})/);
+        const date=dm?dm[0]:'00.00';
+        if(!pt.evals[f.id])pt.evals[f.id]=[];
+        if(!pt.evals[f.id].some(h=>h.date===date))
+          pt.evals[f.id].push({date,v:parseFloat(m[1])});
       }
-    }
+    });
   }
   if(!pt.name)pt.name='파싱된 환자';
   return pt;
 }
 
-function UploadModal({onClose,onParsed}){
+// Sparkline
+function Spark({data,color}){
+  if(!data||data.length<2)return null;
+  const W=50,H=18,mn=Math.min(...data),mx=Math.max(...data),rng=mx-mn||1;
+  const pts=data.map((v,i)=>i/(data.length-1)*W+','+(H-2-(v-mn)/rng*(H-5))).join(' ');
+  return React.createElement('svg',{width:W,height:H,style:{display:'block'}},React.createElement('polyline',{points:pts,fill:'none',stroke:color,strokeWidth:1.8,strokeLinejoin:'round',strokeLinecap:'round'}));
+}
+
+// Patient card
+function PtCard({p,onClick}){
+  const evals=p.evals||{};
+  const scores=EFIELDS.map(f=>{const h=evals[f.id];return h&&h.length?h[h.length-1].v:null;}).filter(v=>v!=null);
+  const ri=scores.length?Math.round(scores.reduce((a,b)=>a+b,0)/scores.length*10):0;
+  const col=rc(ri),dc=DC[p.ref]||'#64748B';
+  return r('div',{className:'ptcard',onClick},
+    r('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:5}},
+      r('div',null,r('div',{style:{fontSize:14,fontWeight:700,color:'#132743'}},p.name||'이름없음'),r('div',{style:{fontSize:10,color:'#64748B',marginTop:1}},(p.age||'—')+'세 · '+(p.g||'—'))),
+      r('span',{style:{fontSize:9,fontWeight:700,padding:'2px 7px',borderRadius:99,background:dc+'18',color:dc,border:'0.5px solid '+dc+'44'}},p.ref||'—')
+    ),
+    r('div',{style:{fontSize:10,color:'#475569',marginBottom:1}},p.diag||'진단 미입력'),
+    r('div',{style:{fontSize:9,color:'#94A3B8',marginBottom:8}},p.dr?p.dr+' 교수':'담당 미입력'),
+    r('div',{style:{display:'flex',alignItems:'flex-end',justifyContent:'space-between',marginBottom:4}},
+      r('div',null,r('div',{style:{fontSize:9,color:'#94A3B8'}},'지표 평균'),r('div',{style:{fontSize:20,fontWeight:700,color:col}},ri)),
+      r('div',{style:{fontSize:9,color:'#94A3B8',textAlign:'right'}},(p.days||0)+'일째')
+    ),
+    r('div',{style:{height:4,background:'#F1F5F9',borderRadius:99,overflow:'hidden'}},r('div',{style:{width:Math.min(100,ri)+'%',height:'100%',background:col,borderRadius:99}}))
+  );
+}
+
+// Sidebar row
+function PtRow({p,sel,onClick}){
+  const dc=DC[p.ref]||'#64748B';
+  return r('div',{className:'ptr'+(sel?' on':''),onClick},
+    r('div',{style:{display:'flex',alignItems:'center',justifyContent:'space-between'}},
+      r('div',null,
+        r('div',{style:{fontSize:11,fontWeight:700,color:'#132743'}},p.name,' ',r('span',{style:{fontSize:9,color:'#94A3B8',fontWeight:400}},p.age+'세 '+p.g)),
+        r('div',{style:{fontSize:9,marginTop:1}},r('span',{style:{color:dc,fontWeight:700}},p.ref),' · ',r('span',{style:{color:'#64748B'}},p.dr||'—'))
+      ),
+      r('div',{style:{fontSize:9,color:'#94A3B8'}},p.days+'일')
+    ),
+    r('div',{style:{fontSize:9,color:'#475569',marginTop:2}},p.diag||'—')
+  );
+}
+
+// Filter bar
+function FilterBar({f,setF,cnt,total}){
+  const o=(key,val,lbl,col)=>{const on=f[key]===val;return r('button',{key:val,className:'fopt'+(on?' on':''),style:on&&col?{background:col}:{},onClick:()=>setF(p=>({...p,[key]:val}))},lbl);};
+  return r('div',{className:'fltbar'},
+    r('div',{className:'fg'},r('span',{className:'flbl'},'나이'),o('age','전체','전체'),o('age','<60','~59세'),o('age','60s','60대'),o('age','70s','70대'),o('age','80+','80세+')),
+    r('div',{className:'fg'},r('span',{className:'flbl'},'성별'),o('g','전체','전체'),o('g','남','남','#185FA5'),o('g','여','여','#993C1D')),
+    r('div',{className:'fg'},r('span',{className:'flbl'},'진단'),o('diag','전체','전체'),...DIAGS.map(d=>o('diag',d,d))),
+    r('div',{className:'fg'},r('span',{className:'flbl'},'과'),o('ref','전체','전체'),...REFS.map(v=>o('ref',v,v,DC[v]))),
+    r('span',{style:{marginLeft:'auto',fontSize:11,fontWeight:600,color:cnt<total?'#BA7517':'#94A3B8'}},cnt<total?cnt+'/'+total+'명':total+'명')
+  );
+}
+
+// Patient form modal
+function PtModal({pt,onClose,onSave}){
+  const isNew=!pt.id;
+  const[fm,setFm]=useState({name:'',ptId:'',age:'',g:'남',diag:'뇌경색',icd:'',admit:'',days:'',ref:'RM',dr:'',...pt});
+  const s=(k,v)=>setFm(p=>({...p,[k]:v}));
+  return r('div',{className:'popbg',onClick:onClose},
+    r('div',{className:'pop',onClick:e=>e.stopPropagation()},
+      r('div',{className:'poph',style:{background:isNew?'#0F6E56':'#185FA5'}},r('div',{className:'popt'},isNew?'+ 새 환자 등록':'환자 정보 수정'),r('button',{className:'popx',onClick:onClose},'✕')),
+      r('div',{className:'popb'},
+        r('div',{className:'fgrid'},
+          r('div',{className:'fld'},r('label',null,'환자명 *'),r('input',{className:'inp',value:fm.name,placeholder:'홍길동',onChange:e=>s('name',e.target.value)})),
+          r('div',{className:'fld'},r('label',null,'등록번호'),r('input',{className:'inp',value:fm.ptId,placeholder:'1234567',onChange:e=>s('ptId',e.target.value)})),
+          r('div',{className:'fld'},r('label',null,'나이'),r('input',{className:'inp',type:'number',value:fm.age,onChange:e=>s('age',e.target.value)})),
+          r('div',{className:'fld'},r('label',null,'성별'),r('select',{className:'inp',value:fm.g,onChange:e=>s('g',e.target.value)},r('option',null,'남'),r('option',null,'여'))),
+          r('div',{className:'fld full'},r('label',null,'진단명'),r('select',{className:'inp',value:fm.diag,onChange:e=>s('diag',e.target.value)},...DIAGS.map(d=>r('option',{key:d},d)))),
+          r('div',{className:'fld'},r('label',null,'ICD'),r('input',{className:'inp',value:fm.icd,placeholder:'I63',onChange:e=>s('icd',e.target.value)})),
+          r('div',{className:'fld'},r('label',null,'입원일'),r('input',{className:'inp',value:fm.admit,placeholder:'03.10',onChange:e=>s('admit',e.target.value)})),
+          r('div',{className:'fld'},r('label',null,'재원일수'),r('input',{className:'inp',type:'number',value:fm.days,onChange:e=>s('days',e.target.value)})),
+          r('div',{className:'fld'},r('label',null,'협진/주치'),r('select',{className:'inp',value:fm.ref,onChange:e=>s('ref',e.target.value)},...REFS.map(v=>r('option',{key:v},v)))),
+          r('div',{className:'fld'},r('label',null,'담당교수'),r('input',{className:'inp',value:fm.dr,placeholder:'김재활',onChange:e=>s('dr',e.target.value)}))
+        ),
+        r('div',{style:{display:'flex',gap:8,marginTop:4}},
+          r('button',{className:'btn bg',style:{flex:1},onClick:async()=>{
+            if(!fm.name){alert('환자명을 입력해주세요');return;}
+            await onSave({...fm,age:parseInt(fm.age)||0,days:parseInt(fm.days)||0,evals:pt.evals||{}});
+            onClose();
+          }},isNew?'등록':'저장'),
+          r('button',{className:'btn bgray',onClick:onClose},'취소')
+        )
+      )
+    )
+  );
+}
+
+// Eval entry modal
+function EvalModal({pt,onClose,onSave}){
+  const today=new Date();
+  const defDate=(today.getMonth()+1).toString().padStart(2,'0')+'.'+(today.getDate()).toString().padStart(2,'0');
+  const[date,setDate]=useState(defDate);
+  const[vals,setVals]=useState({});
+  return r('div',{className:'popbg',onClick:onClose},
+    r('div',{className:'pop',onClick:e=>e.stopPropagation()},
+      r('div',{className:'poph',style:{background:'#534AB7'}},r('div',{className:'popt'},'📋 평가 입력 — '+pt.name),r('button',{className:'popx',onClick:onClose},'✕')),
+      r('div',{className:'popb'},
+        r('div',{style:{marginBottom:10}},
+          r('label',{style:{fontSize:10,color:'#64748B',display:'block',marginBottom:4,fontWeight:600}},'측정일'),
+          r('input',{className:'inp',value:date,placeholder:'04.17',onChange:e=>setDate(e.target.value),style:{width:140}})
+        ),
+        r('div',{className:'agrid'},...EFIELDS.map(f=>r('div',{key:f.id,className:'ac'},
+          r('label',null,f.lbl+(f.max?' /'+f.max:''),' ',r('span',{style:{color:'#94A3B8',fontSize:9}},f.unit)),
+          r('input',{className:'inp',type:'number',placeholder:'입력',value:vals[f.id]||'',onChange:e=>setVals(p=>({...p,[f.id]:e.target.value}))})
+        ))),
+        r('button',{className:'btn bg',style:{width:'100%',marginTop:8},onClick:async()=>{
+          if(!date){alert('측정일을 입력해주세요');return;}
+          const ne={...(pt.evals||{})};
+          Object.entries(vals).forEach(([id,v])=>{
+            if(!v)return;
+            if(!ne[id])ne[id]=[];
+            if(!ne[id].some(h=>h.date===date))
+              ne[id]=[...ne[id],{date,v:parseFloat(v)}].sort((a,b)=>a.date.localeCompare(b.date));
+          });
+          await onSave({...pt,evals:ne});
+          onClose();
+        }},'저장')
+      )
+    )
+  );
+}
+
+// Upload modal
+function UploadModal({onClose,onParsed,selPt}){
   const[log,setLog]=useState([]);
   const[drag,setDrag]=useState(false);
-  const[parsing,setParsing]=useState(false);
-  const[preview,setPreview]=useState(null); // {pts, evals, fname}
+  const[busy,setBusy]=useState(false);
+  const[preview,setPreview]=useState(null);
   const fr=useRef();
   const addLog=m=>setLog(p=>[...p,m]);
 
   async function proc(file){
+    if(busy)return;
     const nm=file.name.toLowerCase();
-    setParsing(true);
+    setBusy(true);
     try{
-      // PDF → Claude AI 파싱
       if(nm.endsWith('.pdf')){
         addLog('📄 '+file.name+' → 텍스트 추출 중...');
         const buf=await file.arrayBuffer();
-        let text='';
-        try{
-          text=await extractPdfText(buf.slice(0));
-        }catch(err){
-          addLog('⚠️ PDF 텍스트 추출 실패: '+err.message);
-          setParsing(false);return;
-        }
-        if(!text.trim()){
-          addLog('⚠️ 텍스트가 없는 스캔 PDF입니다. 텍스트 PDF(EMR 출력본)를 사용해주세요.');
-          setParsing(false);return;
-        }
-        addLog('📝 텍스트 추출 완료 ('+text.length+'자) → 항목 분석 중...');
-        // 규칙 기반 파싱 먼저 시도
-        const{pts:rPts,evals:rEvals}=parseRows(text);
-        if(rPts.length>0||rEvals.length>0){
-          addLog('✅ '+file.name+' → 환자 '+rPts.length+'명, 평가 '+rEvals.length+'건 파싱 완료');
-          setPreview({pts:rPts,evals:rEvals,fname:file.name,rawText:text});
+        let txt='';
+        try{ txt=await pdfToText(buf); }
+        catch(err){ addLog('⚠️ PDF 추출 실패: '+err.message); setBusy(false); return; }
+        if(!txt.trim()){ addLog('⚠️ 텍스트 없는 스캔 PDF입니다. EMR 출력본(텍스트 PDF)을 사용해주세요.'); setBusy(false); return; }
+        addLog('📝 텍스트 '+txt.length+'자 추출 완료 → 항목 분석 중...');
+        const{pts,evals}=parseCSV(txt);
+        if(pts.length>0){
+          addLog('✅ 환자 '+pts.length+'명, 평가 '+evals.length+'건 파싱');
+          setPreview({pts,evals,fname:file.name,rawText:txt});
         } else {
-          // 규칙 기반 실패 시 키워드 스캔 파서
-          const pt=parseFreeText(text);
-          addLog('✅ '+file.name+' → 자유형식 파싱 완료');
-          setPreview({pts:[pt],evals:[],fname:file.name,rawText:text});
+          const pt=parseFreeText(txt);
+          addLog('✅ 자유형식 파싱 완료 → "'+pt.name+'" 인식');
+          setPreview({pts:[pt],evals:[],fname:file.name,rawText:txt});
         }
-      }
-      // Excel → 텍스트 변환 후 파싱
-      else if(nm.endsWith('.xlsx')||nm.endsWith('.xls')){
+      } else if(nm.endsWith('.xlsx')||nm.endsWith('.xls')){
+        addLog('📊 '+file.name+' → Excel 파싱 중...');
         const buf=await file.arrayBuffer();
         const wb=XLSX.read(buf,{type:'array'});
-        // 모든 시트 합치기
-        const allText=wb.SheetNames.map(sn=>XLSX.utils.sheet_to_csv(wb.Sheets[sn])).join('\n');
-        // 먼저 규칙 기반 파싱 시도
-        const{pts,evals}=parseRows(allText);
-        if(pts.length>0||evals.length>0){
-          addLog('✅ '+file.name+' → 환자 '+pts.length+'명, 평가 '+evals.length+'건 파싱');
-          setPreview({pts,evals,fname:file.name});
-        } else {
-          // 규칙 기반 실패 시 Claude AI 파싱
-          addLog('🤖 '+file.name+' → 형식 불명확, Claude AI 분석 중...');
-          const b64=btoa(unescape(encodeURIComponent(allText)));
-          const result=await parseWithClaude(b64,'text/plain',file.name);
-          const aiPts=result.patients||[];
-          addLog('✅ '+file.name+' → 환자 '+aiPts.length+'명 AI 파싱 완료');
-          setPreview({pts:aiPts,evals:[],fname:file.name});
-        }
-      }
-      // CSV → 규칙 기반 파싱
-      else if(nm.endsWith('.csv')){
-        const text=await file.text();
-        const{pts,evals}=parseRows(text);
-        if(pts.length>0||evals.length>0){
-          addLog('✅ '+file.name+' → 환자 '+pts.length+'명, 평가 '+evals.length+'건 파싱');
-          setPreview({pts,evals,fname:file.name});
-        } else {
-          addLog('🤖 '+file.name+' → Claude AI 분석 중...');
-          const b64=btoa(unescape(encodeURIComponent(text)));
-          const result=await parseWithClaude(b64,'text/plain',file.name);
-          const aiPts=result.patients||[];
-          addLog('✅ '+file.name+' → 환자 '+aiPts.length+'명 AI 파싱 완료');
-          setPreview({pts:aiPts,evals:[],fname:file.name});
-        }
-      }
-      else{ addLog('⚠️ '+file.name+': PDF, CSV, XLSX만 지원'); }
-    }catch(err){
-      addLog('❌ '+file.name+': '+err.message);
-      console.error(err);
-    }
-    setParsing(false);
+        const allCsv=wb.SheetNames.map(sn=>XLSX.utils.sheet_to_csv(wb.Sheets[sn])).join('\n');
+        const{pts,evals}=parseCSV(allCsv);
+        addLog('✅ 환자 '+pts.length+'명, 평가 '+evals.length+'건 파싱');
+        setPreview({pts,evals,fname:file.name});
+      } else if(nm.endsWith('.csv')){
+        addLog('📋 '+file.name+' → CSV 파싱 중...');
+        const txt=await file.text();
+        const{pts,evals}=parseCSV(txt);
+        addLog('✅ 환자 '+pts.length+'명, 평가 '+evals.length+'건 파싱');
+        setPreview({pts,evals,fname:file.name});
+      } else { addLog('⚠️ PDF, XLSX, CSV만 지원합니다'); }
+    }catch(err){ addLog('❌ 오류: '+err.message); console.error(err); }
+    setBusy(false);
   }
 
-  return e('div',{className:'popbg',onClick:()=>!parsing&&onClose()},
-    e('div',{className:'pop',style:{maxWidth:540},onClick:ev=>ev.stopPropagation()},
-      e('div',{className:'poph',style:{background:'#132743'}},
-        e('div',{className:'popt'},'📁 파일 업로드 — PDF · Excel · CSV'),
-        e('button',{className:'popx',onClick:()=>!parsing&&onClose()},'✕')
-      ),
-      e('div',{className:'popb'},
-        /* Upload zone */
-        e('div',{className:'upzone'+(drag?' drag':''),
-          style:parsing?{opacity:.6,pointerEvents:'none'}:{},
-          onDragOver:ev=>{ev.preventDefault();setDrag(true);},
+  return r('div',{className:'popbg',onClick:()=>!busy&&onClose()},
+    r('div',{className:'pop',style:{maxWidth:560},onClick:e=>e.stopPropagation()},
+      r('div',{className:'poph',style:{background:'#132743'}},r('div',{className:'popt'},'📁 파일 업로드 — PDF · Excel · CSV'),r('button',{className:'popx',onClick:()=>!busy&&onClose()},'✕')),
+      r('div',{className:'popb'},
+        r('div',{className:'upzone'+(drag?' drag':''),
+          style:busy?{opacity:.6,pointerEvents:'none'}:{},
+          onDragOver:e=>{e.preventDefault();setDrag(true);},
           onDragLeave:()=>setDrag(false),
-          onDrop:async ev=>{ev.preventDefault();setDrag(false);for(const f of ev.dataTransfer.files)await proc(f);},
-          onClick:()=>fr.current?.click()},
-          e('div',{style:{fontSize:28,marginBottom:6}},parsing?'⏳':'📄'),
-          e('div',{style:{fontSize:13,fontWeight:700,color:'#132743'}},
-            parsing?'Claude AI가 분석 중입니다...':'PDF · Excel · CSV 드래그 또는 클릭'),
-          e('div',{style:{fontSize:10,color:'#94A3B8',marginTop:3}},'.pdf · .xlsx · .xls · .csv')
+          onDrop:async e=>{e.preventDefault();setDrag(false);for(const f of e.dataTransfer.files)await proc(f);},
+          onClick:()=>fr.current&&fr.current.click()},
+          r('div',{style:{fontSize:28,marginBottom:6}},busy?'⏳':'📄'),
+          r('div',{style:{fontSize:13,fontWeight:700,color:'#132743'}},busy?'분석 중...':'PDF · Excel · CSV 드래그 또는 클릭'),
+          r('div',{style:{fontSize:10,color:'#94A3B8',marginTop:3}},'.pdf · .xlsx · .xls · .csv')
         ),
-        e('input',{ref:fr,type:'file',accept:'.pdf,.csv,.xlsx,.xls',multiple:true,
-          style:{display:'none'},onChange:async ev=>{for(const f of ev.target.files)await proc(f);}}),
-
-        /* 방식 안내 */
-        e('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,margin:'10px 0 4px',fontSize:10}},
-          e('div',{style:{background:'#FFF7ED',border:'0.5px solid #F59E0B',borderRadius:8,padding:'8px 10px'}},
-            e('div',{style:{fontWeight:700,color:'#B45309',marginBottom:3}},'🤖 AI 파싱 (PDF/불규칙 Excel)'),
-            e('div',{style:{color:'#78350F',lineHeight:1.7}},'어떤 형식의 평가지든 자동 인식',e('br',null),'스캔본도 분석 가능',e('br',null),'병원 자체 양식 OK')
+        r('input',{ref:fr,type:'file',accept:'.pdf,.csv,.xlsx,.xls',multiple:true,style:{display:'none'},onChange:async e=>{for(const f of e.target.files)await proc(f);}}),
+        r('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,margin:'10px 0 4px',fontSize:10}},
+          r('div',{style:{background:'#FFF7ED',border:'0.5px solid #F59E0B',borderRadius:8,padding:'8px 10px'}},
+            r('div',{style:{fontWeight:700,color:'#B45309',marginBottom:2}},'📄 PDF 파싱'),
+            r('div',{style:{color:'#78350F',lineHeight:1.7}},'EMR 출력 텍스트 PDF',r('br',null),'환자정보+평가점수 자동인식',r('br',null),'스캔본은 지원 안됨')
           ),
-          e('div',{style:{background:'#F0FDF4',border:'0.5px solid #22C55E',borderRadius:8,padding:'8px 10px'}},
-            e('div',{style:{fontWeight:700,color:'#15803D',marginBottom:3}},'📊 규칙 파싱 (CSV/정형 Excel)'),
-            e('div',{style:{color:'#166534',lineHeight:1.7}},'이름,나이,진단,BBS,MBI...',e('br',null),'날짜,BBS,MBI,FAC...',e('br',null),'빠르고 정확')
+          r('div',{style:{background:'#F0FDF4',border:'0.5px solid #22C55E',borderRadius:8,padding:'8px 10px'}},
+            r('div',{style:{fontWeight:700,color:'#15803D',marginBottom:2}},'📊 Excel / CSV'),
+            r('div',{style:{color:'#166534',lineHeight:1.7}},'이름,나이,진단,BBS,MBI...',r('br',null),'날짜,BBS,MBI,FAC...',r('br',null),'빠르고 정확')
           )
         ),
-
-        /* 로그 */
-        log.length>0&&e('div',{className:'parse-log'},log.map((l,i)=>e('div',{key:i},l))),
-
-        /* 파싱 결과 미리보기 */
-        preview&&e('div',{style:{border:'1.5px solid #1D9E75',borderRadius:10,margin:'10px 0 4px',overflow:'hidden'}},
-          e('div',{style:{background:'#0F6E56',padding:'8px 12px',display:'flex',alignItems:'center',justifyContent:'space-between'}},
-            e('span',{style:{fontSize:12,fontWeight:700,color:'#fff'}},'✅ 파싱 결과 — 환자 '+preview.pts.length+'명'),
-            e('span',{style:{fontSize:10,color:'#86efac'}},'아래 내용 확인 후 등록하세요')
+        log.length>0&&r('div',{className:'plog'},log.map((l,i)=>r('div',{key:i},l))),
+        preview&&r('div',{className:'preview-box'},
+          r('div',{className:'preview-hdr'},
+            r('span',{style:{fontSize:12,fontWeight:700,color:'#fff'}},'✅ 파싱 결과 — 환자 '+preview.pts.length+'명'),
+            r('span',{style:{fontSize:10,color:'#86efac'}},'확인 후 등록하세요')
           ),
-          e('div',{style:{maxHeight:220,overflowY:'auto'}},
+          r('div',{className:'preview-rows'},
             preview.pts.length===0
-              ? e('div',{style:{padding:'16px',textAlign:'center',color:'#94A3B8',fontSize:12}},'인식된 환자 정보가 없습니다. PDF 내용을 확인해주세요.')
-              : preview.pts.map((p,i)=>e('div',{key:i,style:{padding:'8px 12px',borderBottom:'0.5px solid #E2E8F0',fontSize:11}},
-                  e('div',{style:{display:'flex',gap:12,flexWrap:'wrap',alignItems:'center'}},
-                    e('span',{style:{fontWeight:700,color:'#132743',minWidth:60}},p.name||'이름없음'),
-                    e('span',{style:{color:'#64748B'}},(p.age||'—')+'세 '+(p.g||'')),
-                    e('span',{style:{color:'#475569'}},p.diag||'—'),
-                    p.ref&&e('span',{style:{color:{'RM':'#0F6E56','NU':'#534AB7','NS':'#185FA5','OS':'#BA7517'}[p.ref]||'#64748B',fontWeight:700}},p.ref),
-                    p.dr&&e('span',{style:{color:'#64748B'}},p.dr+' 교수')
+              ? r('div',{style:{padding:'16px',textAlign:'center',color:'#94A3B8',fontSize:12}},'인식된 환자 정보가 없습니다.')
+              : preview.pts.map((p,i)=>r('div',{key:i,className:'preview-row'},
+                  r('div',{style:{display:'flex',gap:10,flexWrap:'wrap',alignItems:'center'}},
+                    r('span',{style:{fontWeight:700,color:'#132743',minWidth:60}},p.name||'이름없음'),
+                    r('span',{style:{color:'#64748B'}},(p.age||'—')+'세 '+(p.g||'')),
+                    r('span',{style:{color:'#475569'}},p.diag||'—'),
+                    p.ref&&r('span',{style:{color:DC[p.ref]||'#64748B',fontWeight:700}},p.ref),
+                    p.dr&&r('span',{style:{color:'#64748B'}},p.dr+' 교수')
                   ),
-                  Object.keys(p.evals||{}).length>0&&e('div',{style:{marginTop:4,display:'flex',gap:8,flexWrap:'wrap'}},
+                  Object.keys(p.evals||{}).length>0&&r('div',{style:{marginTop:4,display:'flex',gap:6,flexWrap:'wrap'}},
                     ...Object.entries(p.evals).filter(([,h])=>h&&h.length>0).map(([k,h])=>
-                      e('span',{key:k,style:{fontSize:10,background:'#F1F5F9',padding:'1px 6px',borderRadius:4}},
-                        k.toUpperCase()+': '+h[h.length-1].v
-                      )
+                      r('span',{key:k,style:{fontSize:10,background:'#F1F5F9',padding:'1px 6px',borderRadius:4}},k.toUpperCase()+': '+h[h.length-1].v)
                     )
                   )
                 ))
           ),
-          e('div',{style:{padding:'8px 12px',background:'#F8FAFC',display:'flex',gap:8,flexWrap:'wrap'}},
-            e('button',{className:'btn btn-g',style:{flex:1},onClick:()=>{onParsed(preview.pts,preview.evals,preview.fname);setPreview(null);}},'✅ Firebase에 등록'),
-            preview.rawText&&e('button',{className:'btn',style:{background:'#64748B'},onClick:()=>{
+          r('div',{className:'preview-ftr'},
+            r('button',{className:'btn bg',style:{flex:1},onClick:()=>{onParsed(preview.pts,preview.evals,selPt);setPreview(null);}},
+              '✅ Firebase에 등록'),
+            preview.rawText&&r('button',{className:'btn',style:{background:'#64748B'},onClick:()=>{
               const w=window.open('','_blank');
-              w.document.write('<pre style="font-size:12px;padding:16px;white-space:pre-wrap">'+preview.rawText+'</pre>');
-            }},'📄 추출 텍스트 보기'),
-            e('button',{className:'btn',style:{background:'#94A3B8'},onClick:()=>setPreview(null)},'다시 업로드')
+              if(w)w.document.write('<pre style="font-size:12px;padding:16px;white-space:pre-wrap;font-family:monospace">'+preview.rawText+'</pre>');
+            }},'📄 추출 텍스트'),
+            r('button',{className:'btn bgray',onClick:()=>setPreview(null)},'다시 업로드')
           )
         )
       )
@@ -621,39 +459,46 @@ function UploadModal({onClose,onParsed}){
   );
 }
 
-/* ── Detail View ── */
+// Detail view
 function DetailView({pt,onEdit,onAddEval,onDelete}){
   const dc=DC[pt.ref]||'#64748B';
   const evals=pt.evals||{};
-  return e('div',{className:'main'},
-    e('div',{style:{display:'flex',alignItems:'center',gap:8,marginBottom:12,flexWrap:'wrap'}},
-      e('div',{style:{flex:1}},
-        e('div',{style:{fontSize:18,fontWeight:700,color:'#132743'}},pt.name,' ',e('span',{style:{fontSize:12,color:'#64748B',fontWeight:400}},pt.age+'세 · '+pt.g)),
-        e('div',{style:{fontSize:11,color:'#475569',marginTop:2}},pt.diag+(pt.icd?' ('+pt.icd+')':''),' · ',e('span',{style:{color:dc,fontWeight:700}},pt.ref),' · ',pt.dr,' 교수 · ',pt.days,'일째')
+  const hasEvals=Object.keys(evals).length>0&&Object.values(evals).some(h=>h&&h.length>0);
+  return r('div',{className:'main'},
+    r('div',{style:{display:'flex',alignItems:'center',gap:8,marginBottom:12,flexWrap:'wrap'}},
+      r('div',{style:{flex:1}},
+        r('div',{style:{fontSize:18,fontWeight:700,color:'#132743'}},pt.name,' ',r('span',{style:{fontSize:12,color:'#64748B',fontWeight:400}},pt.age+'세 · '+pt.g)),
+        r('div',{style:{fontSize:11,color:'#475569',marginTop:2}},
+          pt.diag+(pt.icd?' ('+pt.icd+')':''),' · ',
+          r('span',{style:{color:dc,fontWeight:700}},pt.ref),' · ',
+          pt.dr,' 교수 · ',pt.days,'일째')
       ),
-      e('button',{className:'btn btn-b',onClick:onAddEval},'📋 평가 입력'),
-      e('button',{className:'btn',style:{background:'#64748B'},onClick:onEdit},'✏️ 수정'),
-      e('button',{className:'btn btn-r',onClick:async()=>{if(confirm(pt.name+' 환자를 삭제하시겠습니까?')){await onDelete(pt.id);}}},'🗑 삭제')
+      r('button',{className:'btn bb',onClick:onAddEval},'📋 평가 입력'),
+      r('button',{className:'btn',style:{background:'#64748B'},onClick:onEdit},'✏️ 수정'),
+      r('button',{className:'btn br',onClick:async()=>{if(confirm(pt.name+' 삭제하시겠습니까?')){await onDelete(pt.id);}}},'🗑')
     ),
-    e('div',{className:'card'},
-      e('div',{className:'ch'},e('div',{className:'ct'},'평가 항목별 최근값 · 전체 이력'),e('div',{className:'cc'},'이력이 없는 항목은 표시되지 않습니다')),
-      Object.keys(evals).length===0
-        ? e('div',{style:{padding:'20px',textAlign:'center',color:'#94A3B8',fontSize:12}},'아직 입력된 평가 데이터가 없습니다. "평가 입력" 버튼을 눌러주세요.')
-        : e('div',{className:'ehist'},
-            ...EVAL_FIELDS.filter(f=>evals[f.id]&&evals[f.id].length>0).map(f=>{
+    r('div',{className:'card'},
+      r('div',{className:'ch'},r('div',{className:'ct'},'평가 항목별 이력'),r('div',{className:'cc'},'이력 없는 항목은 숨겨집니다')),
+      !hasEvals
+        ? r('div',{style:{padding:'24px',textAlign:'center',color:'#94A3B8',fontSize:12}},'아직 입력된 평가 데이터가 없습니다.',r('br',null),'위의 "📋 평가 입력" 버튼을 눌러 추가하세요.')
+        : r('div',{style:{padding:'0 14px 14px'}},
+            ...EFIELDS.filter(f=>evals[f.id]&&evals[f.id].length>0).map(f=>{
               const hist=evals[f.id];
               const last=hist[hist.length-1];
-              const pct=f.max?Math.round(last.v/f.max*100):50;
-              return e('div',{key:f.id,style:{marginBottom:14}},
-                e('div',{style:{display:'flex',justifyContent:'space-between',marginBottom:4}},
-                  e('span',{style:{fontSize:11,fontWeight:700,color:'#132743'}},f.label),
-                  e('span',{style:{fontSize:12,fontWeight:700,color:'#185FA5'}},last.v+f.unit+(f.max?' / '+f.max:''))
+              return r('div',{key:f.id,style:{marginBottom:14}},
+                r('div',{style:{display:'flex',justifyContent:'space-between',marginBottom:4}},
+                  r('span',{style:{fontSize:11,fontWeight:700,color:'#132743'}},f.lbl),
+                  r('span',{style:{fontSize:12,fontWeight:700,color:'#185FA5'}},last.v+f.unit+(f.max?' / '+f.max:''))
                 ),
-                ...hist.map((h,i)=>{const p2=f.max?Math.round(h.v/f.max*100):50;const il=i===hist.length-1;return e('div',{key:h.date,className:'hrow'},
-                  e('div',{className:'hdate',style:{fontWeight:il?700:400,color:il?'#132743':'#94A3B8'}},h.date),
-                  e('div',{className:'hbar'},e('div',{className:'hfill',style:{width:p2+'%',background:'#185FA5'}})),
-                  e('div',{className:'hval',style:{color:'#185FA5'}},h.v)
-                );})
+                ...hist.map((h,i)=>{
+                  const pct=f.max?Math.round(h.v/f.max*100):50;
+                  const isLast=i===hist.length-1;
+                  return r('div',{key:h.date,className:'hrow'},
+                    r('div',{className:'hdate',style:{fontWeight:isLast?700:400,color:isLast?'#132743':'#94A3B8'}},h.date),
+                    r('div',{className:'hbar'},r('div',{className:'hfill',style:{width:pct+'%',background:'#185FA5'}})),
+                    r('div',{className:'hval',style:{color:'#185FA5'}},h.v)
+                  );
+                })
               );
             })
           )
@@ -661,49 +506,27 @@ function DetailView({pt,onEdit,onAddEval,onDelete}){
   );
 }
 
-/* ── Filter Bar ── */
-function FilterBar({f,setF,cnt,total}){
-  const opt=(key,val,lbl,col)=>{const on=f[key]===val;return e('button',{key:val,className:`fopt${on?' on':''}`,style:on&&col?{background:col}:{},onClick:()=>setF(p=>({...p,[key]:val}))},lbl);};
-  return e('div',{className:'fltbar'},
-    e('div',{className:'fg'},e('span',{className:'flbl'},'나이'),opt('age','전체','전체'),opt('age','<60','~59세'),opt('age','60s','60대'),opt('age','70s','70대'),opt('age','80+','80세+')),
-    e('div',{className:'fg'},e('span',{className:'flbl'},'성별'),opt('g','전체','전체'),opt('g','남','남','#185FA5'),opt('g','여','여','#993C1D')),
-    e('div',{className:'fg'},e('span',{className:'flbl'},'진단'),opt('diag','전체','전체'),...DIAG_LIST.map(d=>opt('diag',d,d))),
-    e('div',{className:'fg'},e('span',{className:'flbl'},'과'),opt('ref','전체','전체'),...REF_LIST.map(r=>opt('ref',r,r,DC[r]))),
-    e('span',{style:{marginLeft:'auto',fontSize:11,fontWeight:600,color:cnt<total?'#BA7517':'#94A3B8'}},cnt<total?cnt+' / '+total+'명':total+'명')
-  );
-}
-
-/* ── APP ── */
+// Main App
 function App(){
   const[pts,setPts]=useState([]);
   const[fbOk,setFbOk]=useState(false);
   const[selId,setSelId]=useState(null);
-  const[sidebar,setSidebar]=useState(true);
+  const[sb,setSb]=useState(true);
   const[modal,setModal]=useState(null);
   const[f,setF]=useState({age:'전체',g:'전체',diag:'전체',ref:'전체'});
-  const[log,setLog]=useState('');
+  const[syncMsg,setSyncMsg]=useState('');
 
   useEffect(()=>{
-    function init(){
-      setFbOk(true);
-      const unsub=fbSubscribe(data=>{
-        setPts(data);
-        setLog('마지막 동기화: '+new Date().toLocaleTimeString());
-      });
-      return unsub;
+    if(!window._db){
+      console.error('Firebase DB not ready');
+      return;
     }
-    // compat SDK loads synchronously via script tag
-    if(window._db&&window._fbReady){
-      const u=init();return ()=>u&&u();
-    }
-    // fallback: wait for event
-    let unsub=null;
-    function onReady(){unsub=init();}
-    window.addEventListener('fbReady',onReady,{once:true});
-    return ()=>{
-      window.removeEventListener('fbReady',onReady);
-      if(unsub)unsub();
-    };
+    setFbOk(true);
+    const unsub=fbListen(data=>{
+      setPts(data);
+      setSyncMsg(new Date().toLocaleTimeString()+'에 동기화');
+    });
+    return ()=>unsub();
   },[]);
 
   const filtPts=useMemo(()=>pts.filter(p=>{
@@ -720,86 +543,84 @@ function App(){
 
   const selPt=selId?pts.find(p=>p.id===selId):null;
 
-  async function savePt(data){
-    const saved=await fbSavePt(data);
-    if(!data.id)setSelId(saved);
-  }
-  async function deletePt(id){
-    await fbDeletePt(id);
-    setSelId(null);
-  }
-  async function handleParsed(newPts,newEvals,fname){
+  async function savePt(data){const id=await fbSave(data);if(!data.id)setSelId(id);}
+  async function deletePt(id){await fbDel(id);setSelId(null);}
+
+  async function handleParsed(newPts,newEvals,curPt){
     for(const p of newPts){
-      const existing=pts.find(x=>x.ptId===p.ptId||x.name===p.name);
+      const existing=pts.find(x=>x.ptId&&x.ptId===p.ptId)||pts.find(x=>x.name===p.name);
       if(existing){
-        const merged={...existing,...p,evals:existing.evals||{}};
-        await fbSavePt(merged);
+        const merged={...existing,...p,id:existing.id,evals:{...(existing.evals||{}),...(p.evals||{})}};
+        await fbSave(merged);
       } else {
-        await fbSavePt({...p,evals:{}});
+        await fbSave({...p});
       }
     }
-    if(selPt&&newEvals.length){
-      const newEv={...(selPt.evals||{})};
+    if(curPt&&newEvals.length>0){
+      const ne={...(curPt.evals||{})};
       for(const ev of newEvals){
-        if(!newEv[ev.field])newEv[ev.field]=[];
-        if(!newEv[ev.field].some(h=>h.date===ev.date))
-          newEv[ev.field]=[...newEv[ev.field],{date:ev.date,v:ev.val}].sort((a,b)=>a.date.localeCompare(b.date));
+        if(!ne[ev.field])ne[ev.field]=[];
+        if(!ne[ev.field].some(h=>h.date===ev.date))
+          ne[ev.field]=[...ne[ev.field],{date:ev.date,v:ev.val}].sort((a,b)=>a.date.localeCompare(b.date));
       }
-      await fbSavePt({...selPt,evals:newEv});
+      await fbSave({...curPt,evals:ne});
     }
     setModal(null);
   }
 
-  return e('div',null,
-    /* AppBar */
-    e('div',{className:'appbar'},
-      e('div',{className:'al'},'AI'),
-      e('div',null,e('div',{className:'at'},'재활의학과 통합 대시보드'),e('div',{className:'as'},'한림대학교 성심병원 · 재활의학팀')),
-      fbOk
-        ? e('span',{style:{fontSize:10,color:'#86efac',marginLeft:4}},e('span',{className:'sync-dot'}),'실시간 연결 · '+log)
-        : e('span',{style:{fontSize:10,color:'#fca5a5',marginLeft:4}},e('span',{className:'sync-dot off'}),'Firebase 연결 중...'),
-      selId&&e('button',{className:'ab',style:{marginLeft:8},onClick:()=>setSelId(null)},'← 목록'),
-      e('button',{className:'ab ab-g',style:{marginLeft:'auto'},onClick:()=>setModal({type:'upload'})},'📁 파일 업로드'),
-      e('button',{className:'ab ab-g',onClick:()=>setModal({type:'addPt'})},'+ 환자 등록')
-    ),
+  // Appbar
+  const appbar=r('div',{className:'appbar'},
+    r('div',{className:'al'},'AI'),
+    r('div',null,r('div',{className:'at'},'재활의학과 통합 대시보드'),r('div',{className:'as'},'한림대학교 성심병원 · 재활의학팀')),
+    fbOk
+      ? r('span',{style:{fontSize:10,color:'#86efac',marginLeft:4}},r('span',{className:'sdot'}),'실시간 연결 · '+syncMsg)
+      : r('span',{style:{fontSize:10,color:'#fca5a5',marginLeft:4}},r('span',{className:'sdot off'}),'연결 중...'),
+    selId&&r('button',{className:'ab',style:{marginLeft:8},onClick:()=>setSelId(null)},'← 목록'),
+    r('button',{className:'ab ab-g',style:{marginLeft:'auto'},onClick:()=>setModal({type:'upload'})},'📁 파일 업로드'),
+    r('button',{className:'ab ab-g',onClick:()=>setModal({type:'addPt'})},'+ 환자 등록')
+  );
 
-    /* LIST VIEW */
-    !selId&&e('div',null,
-      e(FilterBar,{f,setF,cnt:filtPts.length,total:pts.length}),
-      e('div',{className:'statsbar'},
-        e('span',null,'전체 ',e('b',null,pts.length),'명'),
-        e('span',null,'필터 ',e('b',null,filtPts.length),'명'),
-        e('span',null,'남 ',e('b',null,filtPts.filter(p=>p.g==='남').length),' / 여 ',e('b',null,filtPts.filter(p=>p.g==='여').length)),
-        ...REF_LIST.map(r=>e('span',{key:r},e('span',{style:{color:DC[r]||'#64748B',fontWeight:700}},r),' ',e('b',null,filtPts.filter(p=>p.ref===r).length)))
-      ),
-      pts.length===0&&e('div',{style:{textAlign:'center',padding:'60px',color:'#94A3B8',fontSize:13}},
-        fbOk?'등록된 환자가 없습니다. "환자 등록" 버튼을 눌러 추가하세요.':'Firebase 연결 중...'
-      ),
-      e('div',{className:'ptlist'},
-        ...filtPts.map(p=>e(PtCard,{key:p.id,p,onClick:()=>setSelId(p.id)})),
-        filtPts.length===0&&pts.length>0&&e('div',{style:{gridColumn:'1/-1',textAlign:'center',padding:'40px',color:'#94A3B8',fontSize:13}},'조건에 맞는 환자가 없습니다.')
+  // LIST VIEW
+  if(!selId) return r('div',null,
+    appbar,
+    r(FilterBar,{f,setF,cnt:filtPts.length,total:pts.length}),
+    r('div',{className:'sbar2'},
+      r('span',null,'전체 ',r('b',null,pts.length),'명'),
+      r('span',null,'필터 ',r('b',null,filtPts.length),'명'),
+      r('span',null,'남 ',r('b',null,filtPts.filter(p=>p.g==='남').length),' / 여 ',r('b',null,filtPts.filter(p=>p.g==='여').length)),
+      ...REFS.map(v=>r('span',{key:v},r('span',{style:{color:DC[v],fontWeight:700}},v),' ',r('b',null,filtPts.filter(p=>p.ref===v).length)))
+    ),
+    pts.length===0&&r('div',{style:{textAlign:'center',padding:'60px',color:'#94A3B8',fontSize:13}},
+      fbOk?r('div',null,r('div',{style:{fontSize:18,marginBottom:8}},'👋'),r('div',{style:{fontWeight:700,marginBottom:4}},'등록된 환자가 없습니다'),r('div',{style:{fontSize:12}},'위의 "+ 환자 등록" 또는 "📁 파일 업로드" 버튼을 눌러 시작하세요')):'Firebase 연결 중...'
+    ),
+    r('div',{className:'ptgrid'},
+      ...filtPts.map(p=>r(PtCard,{key:p.id,p,onClick:()=>setSelId(p.id)})),
+      filtPts.length===0&&pts.length>0&&r('div',{style:{gridColumn:'1/-1',textAlign:'center',padding:'40px',color:'#94A3B8',fontSize:13}},'조건에 맞는 환자가 없습니다.')
+    ),
+    modal?.type==='addPt'&&r(PtModal,{pt:{},onClose:()=>setModal(null),onSave:savePt}),
+    modal?.type==='upload'&&r(UploadModal,{onClose:()=>setModal(null),onParsed:handleParsed,selPt:null})
+  );
+
+  // DETAIL VIEW
+  return r('div',null,
+    appbar,
+    selPt&&r('div',{style:{background:'var(--navy2)',borderBottom:'2px solid var(--teal2)',padding:'7px 14px',display:'flex',flexWrap:'wrap',alignItems:'center',gap:'0'}},
+      ...[['환자명',selPt.name],['등록번호',selPt.ptId||'—'],['진단',selPt.diag+(selPt.icd?' ('+selPt.icd+')':'')],['입원일','2026.'+selPt.admit],['재원',selPt.days+'일'],['협진/주치',r('span',{key:'ref',style:{color:DC[selPt.ref]||'#fff',fontWeight:700}},selPt.ref||'—')],['담당교수',selPt.dr+' 교수']].map(([l,v])=>
+        r('div',{key:l,style:{padding:'0 10px',borderRight:'1px solid #2D4A6E'}},r('div',{style:{fontSize:9,color:'#8FAEC5',marginBottom:1}},l),r('div',{style:{fontSize:11,fontWeight:600,color:'#fff'}},v))
       )
     ),
-
-    /* DETAIL VIEW */
-    selPt&&e('div',{className:'split'},
-      sidebar&&e('div',{className:'sidebar'},
-        e('div',{className:'sbhdr'},e('span',null,filtPts.length+'명'),e('button',{style:{fontSize:10,background:'none',border:'none',cursor:'pointer',color:'#64748B',fontFamily:'var(--font)'},onClick:()=>setSidebar(false)},'✕')),
-        ...filtPts.map(p=>e(PtRow,{key:p.id,p,sel:p.id===selId,onClick:()=>setSelId(p.id)}))
+    r('div',{className:'split'},
+      sb&&r('div',{className:'sb'},
+        r('div',{className:'sbh'},r('span',null,filtPts.length+'명'),r('button',{style:{fontSize:10,background:'none',border:'none',cursor:'pointer',color:'#64748B',fontFamily:'var(--font)'},onClick:()=>setSb(false)},'✕')),
+        ...filtPts.map(p=>r(PtRow,{key:p.id,p,sel:p.id===selId,onClick:()=>setSelId(p.id)}))
       ),
-      !sidebar&&e('button',{className:'ab',style:{margin:'12px 0 0 12px',background:'#132743',display:'block'},onClick:()=>setSidebar(true)},'☰ 목록'),
-      e(DetailView,{pt:selPt,
-        onEdit:()=>setModal({type:'editPt',pt:selPt}),
-        onAddEval:()=>setModal({type:'eval',pt:selPt}),
-        onDelete:deletePt
-      })
+      !sb&&r('button',{className:'ab',style:{margin:'12px 0 0 12px',background:'#132743',display:'block'},onClick:()=>setSb(true)},'☰'),
+      selPt&&r(DetailView,{pt:selPt,onEdit:()=>setModal({type:'editPt'}),onAddEval:()=>setModal({type:'eval'}),onDelete:deletePt})
     ),
-
-    /* MODALS */
-    modal?.type==='addPt'&&e(PtModal,{pt:{},onClose:()=>setModal(null),onSave:savePt}),
-    modal?.type==='editPt'&&e(PtModal,{pt:modal.pt,onClose:()=>setModal(null),onSave:savePt}),
-    modal?.type==='eval'&&e(EvalModal,{pt:modal.pt,onClose:()=>setModal(null),onSave:async(updated)=>{await fbSavePt(updated);setModal(null);}}),
-    modal?.type==='upload'&&e(UploadModal,{onClose:()=>setModal(null),onParsed:handleParsed})
+    modal?.type==='addPt'&&r(PtModal,{pt:{},onClose:()=>setModal(null),onSave:savePt}),
+    modal?.type==='editPt'&&r(PtModal,{pt:selPt,onClose:()=>setModal(null),onSave:savePt}),
+    modal?.type==='eval'&&r(EvalModal,{pt:selPt,onClose:()=>setModal(null),onSave:async u=>{await fbSave(u);setModal(null);}}),
+    modal?.type==='upload'&&r(UploadModal,{onClose:()=>setModal(null),onParsed:handleParsed,selPt})
   );
 }
 
